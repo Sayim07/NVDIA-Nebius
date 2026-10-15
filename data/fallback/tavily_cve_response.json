@@ -1,0 +1,26 @@
+{
+  "query": "PyJWT 2.8.0 Next.js 14.2.1 CVE security advisory vulnerability October 2026",
+  "results": [
+    {
+      "title": "CVE-2024-34351: Next.js Server Actions Host Header SSRF Advisory",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-34351",
+      "content": "Next.js versions between 13.4.0 and 14.2.3 contain a Server-Side Request Forgery vulnerability in Server Actions when deployed on custom origin servers without Host header verification.",
+      "score": 0.96,
+      "cve_id": "CVE-2024-34351"
+    },
+    {
+      "title": "PyJWT Algorithm Verification and Token Parsing Guidance",
+      "url": "https://github.com/jpadilla/pyjwt/security/advisories",
+      "content": "Security review for PyJWT 2.8.0 confirms recommended usage: always supply explicit algorithms parameter to decode() to prevent key confusion attacks.",
+      "score": 0.89,
+      "cve_id": "CVE-2024-33663"
+    },
+    {
+      "title": "FastAPI Security Release Notes and Dependency Matrix",
+      "url": "https://fastapi.tiangolo.com/release-notes/",
+      "content": "FastAPI 0.111.0 dependency audit indicates zero open high-severity vulnerabilities. Pydantic v2 integration is stable with safe serialization defaults.",
+      "score": 0.84,
+      "cve_id": null
+    }
+  ]
+}

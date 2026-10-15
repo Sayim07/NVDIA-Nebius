@@ -1,0 +1,42 @@
+policy_version: "1.0.0"
+policy_name: "hermesshield-default-guard"
+enforcement_mode: "strict"
+
+filesystem:
+  allowed_read_roots:
+    - "data/workspace"
+    - "data/skills"
+    - "data/briefings"
+    - "data/MEMORY.md"
+  allowed_write_roots:
+    - "data/workspace"
+    - "data/briefings"
+    - "data/skills"
+  denied_path_patterns:
+    - "^.*\\.env.*$"
+    - "^.*id_rsa.*$"
+    - "^.*\\.ssh.*$"
+    - "^.*credentials.*$"
+    - "^.*\\.git/.*$"
+
+process:
+  allowed_binaries:
+    - "cat"
+    - "ls"
+    - "grep"
+    - "python"
+    - "pytest"
+    - "echo"
+  denied_binaries:
+    - "curl"
+    - "wget"
+    - "nc"
+    - "bash"
+    - "sh"
+    - "rm"
+    - "dd"
+  execution_timeout_seconds: 5.0
+
+network:
+  outbound_http_permitted: false
+  allowed_destinations: []

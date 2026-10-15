@@ -7,47 +7,47 @@
 ### Phase 0: Project Scaffolding, Data Foundation & Contracts (Days 1–2)
 | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| Initialize Git repo, root `LICENSE` (MIT), and `README.md` | Lead-Backend | Not Started | Baseline setup |
-| Set up Python virtual environment & locked `requirements.txt` | Lead-Backend | Not Started | Python 3.11+ |
-| Initialize Next.js 14 project with Tailwind & Framer Motion | Lead-Frontend | Not Started | App Router & TypeScript |
-| Create `config/constants.py` and `config/nemoclaw-policy.yaml` | Lead-Backend | Not Started | System constants & policy |
-| Seed `data/` assets (`MEMORY.md`, manifests, fallback data) | Lead-Frontend | Not Started | Mock workspace data |
-| **[BLOCKING EXIT]** Initialize SQLite database with 4 schemas | Lead-Backend | Not Started | Must pass db table check |
+| Initialize Git repo, root `LICENSE` (MIT), and `README.md` | Lead-Backend | Done | Baseline setup |
+| Set up Python virtual environment & locked `requirements.txt` | Lead-Backend | Done | Python 3.11+ |
+| Initialize Next.js 14 project with Tailwind & Framer Motion | Lead-Frontend | Done | App Router & TypeScript |
+| Create `config/constants.py` and `config/nemoclaw-policy.yaml` | Lead-Backend | Done | System constants & policy |
+| Seed `data/` assets (`MEMORY.md`, manifests, fallback data) | Lead-Frontend | Done | Mock workspace data |
+| **[BLOCKING EXIT]** Initialize SQLite database with 4 schemas | Lead-Backend | Done | Database verified |
 
 ---
 
 ### Phase 1: Backend Engine — OpenShell & Tavily Airlock (Days 3–6)
 | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| Implement OpenShell supervisor (`openshell_guard.py`) | Lead-Backend | Not Started | Out-of-process subprocess guard |
-| Implement regex & Tier 1 PII scrubber (`airlock.py`) | Lead-Backend | Not Started | Intercepts outgoing queries |
-| Implement Tavily search, extract & 24h SQLite caching | Lead-Backend | Not Started | `tavily_scout.py` |
-| Build offline fallback handlers with realistic mock data | Lead-Backend | Not Started | Guarantees zero crashes |
-| **[BLOCKING EXIT]** Implement core REST endpoints in FastAPI | Lead-Backend | Not Started | Health, run, simulate-attack |
+| Implement OpenShell supervisor (`openshell_guard.py`) | Lead-Backend | Done | Out-of-process subprocess guard |
+| Implement regex & Tier 1 PII scrubber (`airlock.py`) | Lead-Backend | Done | Intercepts outgoing queries |
+| Implement Tavily search, extract & 24h SQLite caching | Lead-Backend | Done | `tavily_scout.py` |
+| Build offline fallback handlers with realistic mock data | Lead-Backend | Done | Guarantees zero crashes |
+| **[BLOCKING EXIT]** Implement core REST endpoints in FastAPI | Lead-Backend | Done | Health, run, simulate-attack verified |
 
 ---
 
 ### Phase 2: Frontend Command Center — Next.js 14 Cyber HUD (Days 7–10)
 | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| Configure dark-mode cyber design tokens in `globals.css` | Lead-Frontend | Not Started | `bg-slate-950` palette |
-| Build `Header.tsx` & `FinOpsHUD.tsx` | Lead-Frontend | Not Started | Live cost & latency pill |
-| Build Tab 1: `WorkspacePanel.tsx` with 3 demo presets | Lead-Frontend | Not Started | Executive workspace run |
-| Build Tab 2: `TavilyAirlock.tsx` side-by-side diff card | Lead-Frontend | Not Started | Visual red/green PII diff |
-| Build Tab 3: `NemoClawHUD.tsx` with Red-Team attack trigger | Lead-Frontend | Not Started | Interactive attack simulator |
-| Build Tab 4: `SkillStudio.tsx` (`MEMORY.md` & skill cards) | Lead-Frontend | Not Started | Hermes memory & skills |
-| **[BLOCKING EXIT]** Verify Next.js build & responsive UI | Lead-Frontend | Not Started | Zero type/build errors |
+| Configure dark-mode cyber design tokens in `globals.css` | Lead-Frontend | Done | `bg-slate-950` palette |
+| Build `Header.tsx` & `FinOpsHUD.tsx` | Lead-Frontend | Done | Live cost & latency pill with GSAP |
+| Build Tab 1: `WorkspacePanel.tsx` with 3 demo presets | Lead-Frontend | Done | Executive workspace run |
+| Build Tab 2: `TavilyAirlock.tsx` side-by-side diff card | Lead-Frontend | Done | Visual red/green PII diff |
+| Build Tab 3: `NemoClawHUD.tsx` with Red-Team attack trigger | Lead-Frontend | Done | Interactive attack simulator |
+| Build Tab 4: `SkillStudio.tsx` (`MEMORY.md` & skill cards) | Lead-Frontend | Done | Hermes memory & skills |
+| **[BLOCKING EXIT]** Verify Next.js build & responsive UI | Lead-Frontend | Done | `npm run build` succeeds 0 errors |
 
 ---
 
 ### Phase 3: Integration, Multi-Tier Routing & Hermes Skills (Days 11–13)
 | Task | Owner | Status | Notes |
 | :--- | :--- | :--- | :--- |
-| Connect Nebius Token Factory gateway via `AsyncOpenAI` | Lead-Backend | Not Started | Multi-tier Nemotron router |
-| Connect frontend `api.ts` to backend REST endpoints | Lead-Frontend | Not Started | End-to-end data flow |
-| Implement Tier 3 Hermes Skills Compiler (`POST /skills/compile`) | Lead-Backend | Not Started | Compiles feedback into YAML |
-| Implement Nebius Serverless Overnight Scout job | Lead-Backend | Not Started | Background CVE crawler |
-| **[BLOCKING EXIT]** Complete full execution cycle end-to-end | Lead-Backend | Not Started | Prompt to briefing + skill |
+| Connect Nebius Token Factory gateway via `AsyncOpenAI` | Lead-Backend | Done | Multi-tier Nemotron router |
+| Connect frontend `api.ts` to backend REST endpoints | Lead-Frontend | Done | End-to-end data flow |
+| Implement Tier 3 Hermes Skills Compiler (`POST /skills/compile`) | Lead-Backend | Done | Compiles feedback into YAML |
+| Implement Nebius Serverless Overnight Scout job | Lead-Backend | Done | Background CVE crawler |
+| **[BLOCKING EXIT]** Complete full execution cycle end-to-end | Lead-Backend | Done | Tested via TestClient |
 
 ---
 

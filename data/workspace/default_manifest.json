@@ -1,0 +1,15 @@
+{
+  "project_name": "Apollo Microservice",
+  "repository": "internal-corp/apollo-service",
+  "version": "1.1.0",
+  "lead_maintainer": "DevOps Team (devops@internal.corp)",
+  "staging_url": "https://apollo-staging.company.io",
+  "dependencies": {
+    "backend": {
+      "python": ">=3.11",
+      "fastapi": "0.111.0",
+      "pydantic": "2.7.4"
+    }
+  },
+  "last_audit": "2026-10-12"
+}

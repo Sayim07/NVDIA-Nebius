@@ -1,0 +1,28 @@
+{
+  "project_name": "Project Titan",
+  "repository": "internal-corp/project-titan",
+  "version": "2.4.1",
+  "lead_maintainer": "Sayim (sayim@internal.corp)",
+  "staging_url": "https://titan-internal-staging.company.io",
+  "api_endpoint": "https://api.internal-titan.corp/v1",
+  "description": "Zero-trust personal executive auth and routing gateway microservice.",
+  "dependencies": {
+    "backend": {
+      "python": ">=3.11",
+      "fastapi": "0.111.0",
+      "pyjwt": "2.8.0",
+      "uvicorn": "0.30.1",
+      "pydantic": "2.7.4",
+      "openai": "1.35.0"
+    },
+    "frontend": {
+      "node": ">=20.0.0",
+      "next": "14.2.1",
+      "react": "18.3.1",
+      "tailwindcss": "3.4.4",
+      "framer-motion": "11.2.10"
+    }
+  },
+  "last_audit": "2026-10-10",
+  "security_notes": "PyJWT and Next.js require weekly CVE verification prior to production releases."
+}
