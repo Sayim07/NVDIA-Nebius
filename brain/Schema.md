@@ -70,14 +70,22 @@ hermesshield/
             ├── layout.tsx
             └── page.tsx             # 4-panel Command Center dashboard
         ├── components/
-            ├── FinOpsHUD.tsx
-            ├── Header.tsx
-            ├── NemoClawHUD.tsx
-            ├── SkillStudio.tsx
-            ├── TavilyAirlock.tsx
-            └── WorkspacePanel.tsx
+        │   ├── FinOpsHUD.tsx
+        │   ├── Header.tsx
+        │   ├── NemoClawHUD.tsx
+        │   ├── SkillStudio.tsx
+        │   ├── TavilyAirlock.tsx
+        │   ├── WorkspacePanel.tsx
+        │   ├── providers/
+        │   │   └── SmoothScrollProvider.tsx # Lenis smooth scrolling
+        │   └── ui/
+        │       ├── AnimatedCounter.tsx      # GSAP luxury numerical count-up ticker
+        │       ├── CommandPalette.tsx       # cmdk fuzzy launcher (Ctrl+K)
+        │       ├── Magnetic.tsx             # GSAP magnetic button attraction
+        │       └── TiltCard.tsx             # GSAP 3D perspective tilt with sheen
         ├── lib/
             ├── api.ts               # Typed client fetchers
+            ├── utils.ts             # cn() tailwind-merge helper
             └── types.ts             # TypeScript mirrors of backend models
 ```
 

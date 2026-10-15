@@ -44,10 +44,16 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
   - *Justification:* Industry-standard React framework supporting server components, optimized client state, and rapid local iteration. Single default chosen; locked on Day 1.
 - **Language: TypeScript 5.0+**
   - *Justification:* Enforces strict compile-time types matching backend schemas defined in [Schema.md §2](./Schema.md#2-typescript-frontend-interfaces).
-- **Styling: Tailwind CSS v3.4+**
-  - *Justification:* Rapid implementation of rich cybersecurity dark-mode UI palettes (`slate-950`, emerald cyber accents, rose security banners).
-- **Animation: Framer Motion v11+**
-  - *Justification:* Smooth transitions for diff cards, telemetry metrics, and security violation banners.
+- **Styling: Tailwind CSS v3.4+ (`clsx`, `tailwind-merge`, `class-variance-authority`)**
+  - *Justification:* Rapid implementation of rich cybersecurity dark-mode UI palettes (`slate-950`, emerald cyber accents, rose security banners) without bloated CSS.
+- **UI Primitives: Radix UI & cmdk**
+  - *Justification:* Accessible, unstyled primitives (`Dialog`, `Tabs`, `Tooltip`) paired with `cmdk` for the global Command Palette (`Ctrl+K` / `Cmd+K`).
+- **3D Physics & Motion Engine: GSAP (`gsap` + `@gsap/react`)**
+  - *Justification:* High-performance 3D perspective card tilts with specular reflection (`TiltCard`), magnetic cursor attraction (`Magnetic`), and luxury numerical tickers (`AnimatedCounter`).
+- **Layout & Spring Animation: Framer Motion v11+**
+  - *Justification:* Fluid spring transitions, animated tab indicators (`layoutId`), and red-team violation alert slides.
+- **Inertial Smooth Scrolling: Lenis (`lenis`)**
+  - *Justification:* Momentum-based smooth scrolling providing a luxury, agency-grade feel.
 - **Icons: Lucide React**
   - *Justification:* Clean, lightweight iconography for cyber badges, status pills, and terminal tabs.
 

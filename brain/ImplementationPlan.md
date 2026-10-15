@@ -18,7 +18,7 @@
 - **Tasks:**
   - [ ] Initialize repository structure with root `LICENSE` (MIT) and `README.md`.
   - [ ] Set up Python virtual environment, locked `backend/requirements.txt` (FastAPI, Uvicorn, AsyncOpenAI, tavily-python, PyYAML, Pydantic v2).
-  - [ ] Set up Next.js 14 project in `frontend/` with TypeScript, Tailwind CSS, Framer Motion, and Lucide React.
+  - [ ] Set up Next.js 14 project in `frontend/` with TypeScript, Tailwind CSS, Framer Motion, GSAP (`@gsap/react`, `gsap`), Lenis (`lenis`), `cmdk`, Radix UI primitives, and Lucide React.
   - [ ] Create `config/constants.py` and `config/nemoclaw-policy.yaml`.
   - [ ] Create `data/` directory structure with `MEMORY.md`, `workspace/project_titan_manifest.json`, and `fallback/` JSON/markdown assets.
   - [ ] Initialize SQLite database helper (`backend/services/database.py`) with all 4 tables from [Schema.md §4](./Schema.md#4-database-schema-sqlite-datahermesshielddb).
@@ -47,11 +47,12 @@
 - **Primary Owner:** `Lead-Frontend`
 - **Tasks:**
   - [ ] Implement global dark theme in `frontend/src/app/globals.css` with Cyber Emerald, Rose, Cyan, and Amber design tokens.
-  - [ ] Build global `Header.tsx` featuring the immutable title `HermesShield` and the live `FinOpsHUD.tsx`.
+  - [ ] Build luxury UI physics primitives: `SmoothScrollProvider.tsx` (Lenis), `TiltCard.tsx` (GSAP 3D perspective tilt), `Magnetic.tsx` (cursor attraction), `AnimatedCounter.tsx` (GSAP count-up tickers), and `CommandPalette.tsx` (`cmdk` Ctrl+K).
+  - [ ] Build global `Header.tsx` featuring the immutable title `HermesShield` and the live `FinOpsHUD.tsx` with animated counters.
   - [ ] Build `WorkspacePanel.tsx` (Tab 1): workspace manifest selector, 3 one-click evaluation presets, briefing markdown renderer.
   - [ ] Build `TavilyAirlock.tsx` (Tab 2): side-by-side diff card (Raw Context vs. Sanitized Query) with red/green badge highlighting and expandable extracted CVE source cards.
-  - [ ] Build `NemoClawHUD.tsx` (Tab 3): policy YAML viewer, 1-click Red-Team attack trigger, animated rose violation alert banner, and real-time security audit log.
-  - [ ] Build `SkillStudio.tsx` (Tab 4): `data/MEMORY.md` live viewer/editor, feedback compiler input, and interactive YAML skill library.
+  - [ ] Build `NemoClawHUD.tsx` (Tab 3): policy YAML viewer, 1-click Red-Team attack trigger with magnetic hover, animated rose violation alert banner, and real-time security audit log.
+  - [ ] Build `SkillStudio.tsx` (Tab 4): `data/MEMORY.md` live viewer/editor, feedback compiler input, and interactive YAML skill library with 3D tilt cards.
 - **Exit Criteria:**
   - UI faithfully renders all 4 tabs at 60fps with zero layout shifts.
   - Tab titles and metadata explicitly state `HermesShield — Zero-Trust Personal AI Executive & Deep Web Scout`.

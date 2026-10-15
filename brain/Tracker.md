@@ -84,3 +84,4 @@
 | 2026-10-15 | Harden OpenShell & standardize `NEMOCLAW_POLICY_EXFIL` | Rejects chaining operators, checks all tokens, and unifies rule ID. | ImplementationPlan §3.3, AppFlow §4, Schema §5.3, Design §4.2 |
 | 2026-10-15 | Enforce GitHub-relative documentation links | Ensures markdown file navigation functions on GitHub without broken local machine paths. | PRD, TRD, Schema, ImplementationPlan, Rules |
 | 2026-10-15 | Lock `TAVILY_SEARCH_DEPTH = "basic"` | Conserves Tavily Free Researcher credits (1 credit/search instead of 2). | TRD §4, ImplementationPlan §3.2 |
+| 2026-10-15 | Adopt Anti-Slop Design Taste System & 5-Pillar Animation Stack | Enforces Linear/Stripe craft with GSAP 3D Tilt, Lenis, Radix, cmdk, and Framer Motion. | Design, TRD §2.1, Schema §1, ImplementationPlan, .agents/skills/design-taste |
