@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Terminal,
   ShieldAlert,
   Cpu,
   Brain,
+  Layers,
+  Sparkles,
+  ExternalLink,
+  ChevronRight,
 } from 'lucide-react';
 import {
   HealthStatus,
@@ -14,7 +18,6 @@ import {
   AgentRunResponse,
   SecurityStateResponse,
   MemoryStateResponse,
-  HermesSkill,
 } from '@/lib/types';
 import {
   fetchHealth,
@@ -28,17 +31,21 @@ import {
 } from '@/lib/api';
 import { Header } from '@/components/Header';
 import { EditorialHero } from '@/components/EditorialHero';
+import { MetricsRibbon } from '@/components/MetricsRibbon';
+import { ArchitectureShowcase } from '@/components/ArchitectureShowcase';
+import { AirlockSection } from '@/components/AirlockSection';
+import { FinOpsHUD } from '@/components/FinOpsHUD';
 import { WorkspacePanel } from '@/components/WorkspacePanel';
 import { TavilyAirlock } from '@/components/TavilyAirlock';
 import { NemoClawHUD } from '@/components/NemoClawHUD';
 import { SkillStudio } from '@/components/SkillStudio';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 
-const TABS = [
-  { id: 'workspace', label: '01 // WORKSPACE', sub: 'Executive Runner', icon: Terminal },
-  { id: 'airlock', label: '02 // AIRLOCK', sub: 'Tavily Privacy Filter', icon: ShieldAlert },
-  { id: 'security', label: '03 // NEMOCLAW', sub: 'Out-of-Process Guard', icon: Cpu },
-  { id: 'skills', label: '04 // SKILLS', sub: 'Episodic Memory & Studio', icon: Brain },
+const CONSOLE_TABS = [
+  { id: 'workspace', label: '01 // WORKSPACE RUNNER', sub: 'Executive Briefings & Presets', icon: Terminal },
+  { id: 'airlock', label: '02 // TAVILY AIRLOCK', sub: 'Zero-PII Search Diff', icon: ShieldAlert },
+  { id: 'security', label: '03 // NEMOCLAW GUARD', sub: 'Out-of-Process Ledger', icon: Cpu },
+  { id: 'skills', label: '04 // HERMES SKILLS', sub: 'Episodic Memory & YAML', icon: Brain },
 ];
 
 export default function Dashboard() {
@@ -49,7 +56,7 @@ export default function Dashboard() {
   const [loadingRun, setLoadingRun] = useState(false);
   const [securityState, setSecurityState] = useState<SecurityStateResponse | null>(null);
   const [memoryState, setMemoryState] = useState<MemoryStateResponse | null>(null);
-  const [cmdOpen, setCmdOpen] = useState(false);
+  const consoleRef = useRef<HTMLDivElement>(null);
 
   // Initial handshake and state loading
   useEffect(() => {
@@ -78,6 +85,13 @@ export default function Dashboard() {
     init();
   }, []);
 
+  const scrollToConsole = () => {
+    const el = document.getElementById('console');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleRunAgent = async (instruction: string, workspaceId: string, presetName?: string) => {
     setLoadingRun(true);
     try {
@@ -95,8 +109,9 @@ export default function Dashboard() {
   };
 
   const handleSimulateAttack = async () => {
+    setActiveTab('security');
+    scrollToConsole();
     const res = await simulateAttack();
-    // Refresh security state
     const sec = await fetchSecurityState();
     setSecurityState(sec);
     return res;
@@ -120,22 +135,25 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-300">
+      {/* Top Professional Navigation Header */}
       <Header
-        telemetry={telemetry}
         health={health}
-        activeTab={activeTab}
-        onSelectTab={(tab) => setActiveTab(tab)}
         onOpenCommand={() => {
           const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
           document.dispatchEvent(down);
         }}
+        onScrollToConsole={scrollToConsole}
       />
 
+      {/* Global Cmd+K Command Palette */}
       <CommandPalette
-        onSelectTab={(tab) => setActiveTab(tab)}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          scrollToConsole();
+        }}
         onRunPreset={(presetKey) => {
           setActiveTab('workspace');
-          // Trigger preset
+          scrollToConsole();
           if (presetKey === 'architecture_sync') {
             handleRunAgent(
               'Prep my technical briefing for my 2 PM architecture sync on Project Titan, check FastAPI & Next.js CVEs.',
@@ -145,110 +163,156 @@ export default function Dashboard() {
           }
         }}
         onSimulateAttack={async () => {
-          setActiveTab('security');
           await handleSimulateAttack();
         }}
         onTriggerScout={async () => {
           setActiveTab('skills');
+          scrollToConsole();
           await handleTriggerScout();
         }}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
-        {/* Editorial Hero Statement inspired by reference typography */}
-        <EditorialHero />
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-16">
+        {/* Section 1: Hero Section */}
+        <EditorialHero
+          onScrollToConsole={scrollToConsole}
+          onSimulateAttack={handleSimulateAttack}
+        />
 
-        {/* 4-Panel Navigation Rails */}
-        <div>
-          <div className="flex items-center justify-between pb-2 mb-3">
-            <span className="text-[10px] font-mono tracking-widest text-slate-500 uppercase">
-              [ NAVIGATION // RUNTIME MODULES ]
-            </span>
-            <span className="text-[10px] font-mono text-emerald-400">
-              [ ACTIVE: {activeTab.toUpperCase()} ]
-            </span>
+        {/* Section 2: Key Proof Metrics */}
+        <MetricsRibbon />
+
+        {/* Section 3: Architecture Bento Grid */}
+        <ArchitectureShowcase
+          onSelectConsoleTab={(tabId) => {
+            setActiveTab(tabId);
+            scrollToConsole();
+          }}
+        />
+
+        {/* Section 4: Tavily Airlock Deep Dive */}
+        <AirlockSection
+          onOpenAirlock={() => {
+            setActiveTab('airlock');
+            scrollToConsole();
+          }}
+        />
+
+        {/* Section 5: The Live Interactive Console */}
+        <section id="console" ref={consoleRef} className="pt-8 pb-16 border-t border-slate-900/80">
+          {/* Console Header Bar */}
+          <div className="p-5 rounded-t-xl bg-slate-900 border border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center space-x-2 text-[10px] font-mono tracking-widest text-emerald-400 uppercase mb-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>[ INTERACTIVE EXECUTION ENVIRONMENT ]</span>
+              </div>
+              <h2 className="text-xl font-black uppercase text-white tracking-tight flex items-center gap-2">
+                HERMESSHIELD LIVE CONSOLE <span className="font-editorial italic font-normal text-emerald-400 lowercase text-2xl tracking-normal">runtime</span>
+              </h2>
+            </div>
+
+            {/* Docked FinOps Telemetry HUD */}
+            <div className="shrink-0">
+              <FinOpsHUD telemetry={telemetry} health={health} />
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 border-b border-slate-900 pb-4">
-            {TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`p-3 rounded text-left transition-all relative border ${
-                    isActive
-                      ? 'bg-slate-900/90 border-slate-700 text-white shadow-sm'
-                      : 'bg-slate-950/60 border-slate-900 text-slate-400 hover:text-slate-200 hover:border-slate-800'
-                  }`}
-                >
-                  <div className="flex items-center space-x-2 font-mono text-xs font-bold">
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
-                    <span>[ {tab.label} ]</span>
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-mono mt-1 pl-5">
-                    {tab.sub}
-                  </div>
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-nav-glow"
-                      className="absolute inset-0 border border-emerald-500/30 rounded pointer-events-none"
-                      transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
+          {/* Unified Console Tab Switcher */}
+          <div className="bg-slate-950 border-x border-b border-slate-800 p-2">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              {CONSOLE_TABS.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`relative p-3 rounded text-left transition-all border ${
+                      isActive
+                        ? 'bg-slate-900 border-slate-700 text-white shadow-sm'
+                        : 'bg-slate-950/40 border-slate-900 text-slate-400 hover:text-slate-200 hover:border-slate-800'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2 font-mono text-xs font-bold">
+                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                      <span className="tracking-wider">{tab.label}</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-mono mt-1 pl-5">
+                      {tab.sub}
+                    </div>
+                    {isActive && (
+                      <motion.div
+                        layoutId="active-console-tab"
+                        className="absolute inset-0 border border-emerald-500/40 rounded pointer-events-none"
+                        transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Tab Views */}
-        <div className="pt-2">
-          {activeTab === 'workspace' && (
-            <WorkspacePanel
-              onRun={handleRunAgent}
-              loading={loadingRun}
-              result={agentResult}
-            />
-          )}
+          {/* Active Tab Panel Container */}
+          <div className="p-6 bg-slate-950/70 border-x border-b border-slate-800 rounded-b-xl min-h-[500px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                {activeTab === 'workspace' && (
+                  <WorkspacePanel
+                    onRun={handleRunAgent}
+                    loading={loadingRun}
+                    result={agentResult}
+                  />
+                )}
 
-          {activeTab === 'airlock' && (
-            <TavilyAirlock airlock={agentResult?.airlock ?? null} />
-          )}
+                {activeTab === 'airlock' && (
+                  <TavilyAirlock airlock={agentResult?.airlock ?? null} />
+                )}
 
-          {activeTab === 'security' && (
-            <NemoClawHUD
-              policyYaml={securityState?.policy_yaml ?? ''}
-              events={securityState?.events ?? []}
-              onSimulateAttack={handleSimulateAttack}
-            />
-          )}
+                {activeTab === 'security' && (
+                  <NemoClawHUD
+                    policyYaml={securityState?.policy_yaml ?? ''}
+                    events={securityState?.events ?? []}
+                    onSimulateAttack={handleSimulateAttack}
+                  />
+                )}
 
-          {activeTab === 'skills' && (
-            <SkillStudio
-              memoryMarkdown={memoryState?.memory_markdown ?? ''}
-              skills={memoryState?.skills ?? []}
-              onSaveMemory={handleSaveMemory}
-              onCompileSkill={handleCompileSkill}
-              onTriggerScout={handleTriggerScout}
-            />
-          )}
-        </div>
+                {activeTab === 'skills' && (
+                  <SkillStudio
+                    memoryMarkdown={memoryState?.memory_markdown ?? ''}
+                    skills={memoryState?.skills ?? []}
+                    onSaveMemory={handleSaveMemory}
+                    onCompileSkill={handleCompileSkill}
+                    onTriggerScout={handleTriggerScout}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </section>
       </main>
 
-      {/* Global Perimeter Footer */}
-      <footer className="border-t border-slate-900/90 py-5 px-4 text-xs font-mono text-slate-500 bg-slate-950">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Agency-Grade Global Perimeter Footer */}
+      <footer className="border-t border-slate-900 py-8 px-4 text-xs font-mono text-slate-500 bg-slate-950">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-slate-400">[ HERMESSHIELD° V1.0.0 ]</span>
+            <span className="font-bold text-white uppercase">HERMESSHIELD°</span>
             <span>—</span>
-            <span>[ ZERO-TRUST SOVEREIGN PERSONAL AI ]</span>
+            <span className="text-slate-400">Zero-Trust Sovereign Personal AI & Deep Web Scout</span>
           </div>
-          <div className="flex items-center space-x-3 text-slate-600">
-            <span>[ NEBIUS TOKEN FACTORY ]</span>
+
+          <div className="flex items-center space-x-4 text-slate-500">
             <span>[ NVIDIA NEMOCLAW ]</span>
-            <span className="text-emerald-400 font-semibold">[ DEVPOST 2026 ]</span>
+            <span>[ NEBIUS TOKEN FACTORY ]</span>
+            <span>[ TAVILY AIRLOCK ]</span>
+            <span className="text-emerald-400 font-bold">[ DEVPOST 2026 ]</span>
           </div>
         </div>
       </footer>

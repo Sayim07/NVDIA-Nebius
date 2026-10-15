@@ -1,100 +1,107 @@
 'use client';
 
 import React from 'react';
-import { FinOpsTelemetry, HealthStatus } from '@/lib/types';
-import { FinOpsHUD } from './FinOpsHUD';
+import { HealthStatus } from '@/lib/types';
+import { ArrowUpRight, Shield, Terminal } from 'lucide-react';
 
 interface HeaderProps {
-  telemetry: FinOpsTelemetry | null;
   health: HealthStatus | null;
-  activeTab: string;
-  onSelectTab: (tab: string) => void;
   onOpenCommand: () => void;
+  onScrollToConsole: () => void;
 }
 
-const NAV_ITEMS = [
-  { id: 'workspace', label: '01 // WORKSPACE' },
-  { id: 'airlock', label: '02 // AIRLOCK' },
-  { id: 'security', label: '03 // NEMOCLAW' },
-  { id: 'skills', label: '04 // SKILLS' },
-];
-
 export const Header: React.FC<HeaderProps> = ({
-  telemetry,
   health,
-  activeTab,
-  onSelectTab,
   onOpenCommand,
+  onScrollToConsole,
 }) => {
+  const isFallback = health?.is_fallback ?? true;
+
   return (
-    <header className="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
-      {/* Top Main Perimeter Bar */}
-      <div className="w-full px-4 sm:px-6 py-3 flex items-center justify-between border-b border-slate-900/60">
-        {/* Left: Brand Identity in Reference Style */}
+    <header className="sticky top-0 z-50 w-full bg-slate-950/85 backdrop-blur-md border-b border-slate-800/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        {/* Left: Brand Identity with Status Beacon */}
         <div className="flex items-center space-x-3">
-          <div className="leading-none">
-            <div className="flex items-center space-x-1.5">
-              <span className="text-sm font-black tracking-tight text-white uppercase">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse" />
+            <a href="#" className="flex items-baseline space-x-1.5 group">
+              <span className="text-base font-black tracking-tight text-white uppercase group-hover:text-emerald-400 transition-colors">
                 HERMESSHIELD
               </span>
-              <span className="text-emerald-400 font-mono text-sm leading-none font-bold">°</span>
-            </div>
-            <div className="text-[9px] font-mono tracking-widest text-slate-500 uppercase mt-0.5">
-              PERSONAL AI EXECUTIVE & DEEP WEB SCOUT
-            </div>
+              <span className="text-emerald-400 font-mono text-xs font-bold">°</span>
+            </a>
           </div>
+          <span className="hidden lg:inline text-[10px] font-mono tracking-widest text-slate-500 uppercase border-l border-slate-800 pl-3">
+            ZERO-TRUST PERSONAL AI
+          </span>
         </div>
 
-        {/* Center: Desktop Bracketed Navigation Rails */}
-        <nav className="hidden md:flex items-center space-x-1 font-mono text-xs">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                className={`px-3 py-1.5 rounded transition-all tracking-wider ${
-                  isActive
-                    ? 'text-emerald-400 bg-slate-900 border border-slate-700/80 font-bold shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
-                }`}
-              >
-                [ {item.label} ]
-              </button>
-            );
-          })}
+        {/* Center: Editorial Navigation Anchor Links */}
+        <nav className="hidden md:flex items-center space-x-6 text-xs font-mono text-slate-400">
+          <a
+            href="#overview"
+            className="hover:text-emerald-400 transition-colors tracking-wider"
+          >
+            [ OVERVIEW ]
+          </a>
+          <a
+            href="#architecture"
+            className="hover:text-emerald-400 transition-colors tracking-wider"
+          >
+            [ ARCHITECTURE ]
+          </a>
+          <a
+            href="#airlock-tech"
+            className="hover:text-cyan-400 transition-colors tracking-wider"
+          >
+            [ TAVILY AIRLOCK ]
+          </a>
+          <a
+            href="#finops-metrics"
+            className="hover:text-amber-400 transition-colors tracking-wider"
+          >
+            [ FINOPS ]
+          </a>
+          <button
+            onClick={onScrollToConsole}
+            className="hover:text-white transition-colors tracking-wider text-emerald-400 font-semibold"
+          >
+            [ LIVE CONSOLE ]
+          </button>
         </nav>
 
-        {/* Right: Cmd+K & Telemetry HUD */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        {/* Right: Quick Command & Launch Action */}
+        <div className="flex items-center space-x-3">
+          {/* Quick Cmd+K trigger */}
           <button
             onClick={onOpenCommand}
-            className="hidden lg:flex items-center space-x-1 px-2.5 py-1 text-[11px] font-mono text-slate-400 hover:text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-800 rounded transition-colors"
+            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 text-[11px] font-mono text-slate-400 hover:text-slate-200 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded transition-all whitespace-nowrap"
           >
-            <span>[ CMD+K ]</span>
+            <span className="text-slate-500">⌘K</span>
+            <span>SEARCH</span>
           </button>
-          <FinOpsHUD telemetry={telemetry} health={health} />
-        </div>
-      </div>
 
-      {/* Sub-Header Mobile Navigation Rail */}
-      <div className="md:hidden flex items-center space-x-1 px-3 py-2 overflow-x-auto bg-slate-950 border-b border-slate-900 text-xs font-mono">
-        {NAV_ITEMS.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              className={`px-2.5 py-1 rounded whitespace-nowrap text-[11px] ${
-                isActive
-                  ? 'text-emerald-400 bg-slate-900 border border-slate-800 font-bold'
-                  : 'text-slate-500 hover:text-slate-300'
+          {/* Runtime Engine Pill */}
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 text-[10px] font-mono rounded bg-slate-900/80 border border-slate-800 text-slate-300 whitespace-nowrap">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isFallback ? 'bg-amber-400' : 'bg-emerald-400'
               }`}
-            >
-              [ {item.label} ]
-            </button>
-          );
-        })}
+            />
+            <span className="text-slate-400">
+              {isFallback ? 'SIMULATED' : 'NEMOTRON LIVE'}
+            </span>
+          </div>
+
+          {/* Primary CTA */}
+          <button
+            onClick={onScrollToConsole}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] whitespace-nowrap"
+          >
+            <span>LAUNCH CONSOLE</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
     </header>
   );

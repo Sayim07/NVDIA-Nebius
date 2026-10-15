@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { DollarSign, Clock, Zap } from 'lucide-react';
 import { FinOpsTelemetry, HealthStatus } from '@/lib/types';
 import { AnimatedCounter } from './ui/AnimatedCounter';
+import { Activity, ShieldCheck, Zap } from 'lucide-react';
 
 interface FinOpsHUDProps {
   telemetry: FinOpsTelemetry | null;
@@ -17,32 +17,30 @@ export const FinOpsHUD: React.FC<FinOpsHUDProps> = ({ telemetry, health }) => {
   const reduction = telemetry?.cost_reduction_percent ?? 82.25;
 
   return (
-    <div className="flex items-center space-x-2 md:space-x-3 text-[11px] font-mono tracking-tight">
-      {/* FinOps Bracket Pill */}
-      <div className="flex items-center px-3 py-1 rounded bg-slate-900/90 border border-slate-800/80 text-slate-300">
-        <span className="text-slate-500 mr-1.5">[ FINOPS:</span>
-        <AnimatedCounter value={cost} decimals={5} prefix="$" className="text-emerald-400 font-semibold" />
-        <span className="text-slate-500 mx-1">|</span>
-        <span className="text-emerald-400 font-medium">-{reduction.toFixed(1)}%</span>
-        <span className="text-slate-500 ml-1">]</span>
+    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono">
+      {/* FinOps Cost Pill */}
+      <div className="flex items-center px-3 py-1.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300 whitespace-nowrap">
+        <span className="text-slate-500 mr-2 text-[10px] tracking-wider uppercase">FINOPS COST:</span>
+        <AnimatedCounter value={cost} decimals={5} prefix="$" className="text-emerald-400 font-bold" />
+        <span className="text-slate-600 mx-1.5">/</span>
+        <span className="text-emerald-400 font-semibold text-[11px]">-{reduction.toFixed(1)}% SAVINGS</span>
       </div>
 
-      {/* Latency Bracket Pill */}
-      <div className="hidden sm:flex items-center px-3 py-1 rounded bg-slate-900/90 border border-slate-800/80 text-slate-300">
-        <span className="text-slate-500 mr-1.5">[ LATENCY:</span>
-        <AnimatedCounter value={latency} decimals={2} suffix="s" className="text-cyan-400 font-semibold" />
-        <span className="text-slate-500 ml-1">]</span>
+      {/* Latency Pill */}
+      <div className="flex items-center px-3 py-1.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300 whitespace-nowrap">
+        <span className="text-slate-500 mr-2 text-[10px] tracking-wider uppercase">AVG LATENCY:</span>
+        <AnimatedCounter value={latency} decimals={2} suffix="s" className="text-cyan-400 font-bold" />
       </div>
 
-      {/* Engine Status Bracket Pill */}
-      <div className="flex items-center px-3 py-1 rounded bg-slate-900/90 border border-slate-800/80 text-slate-300">
+      {/* Engine Status Pill */}
+      <div className="flex items-center px-3 py-1.5 rounded bg-slate-950/80 border border-slate-800 text-slate-300 whitespace-nowrap">
         <span
-          className={`w-1.5 h-1.5 rounded-full mr-2 ${
-            isFallback ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.7)]'
+          className={`w-2 h-2 rounded-full mr-2 ${
+            isFallback ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]'
           }`}
         />
-        <span className="text-slate-400 text-[10px] uppercase tracking-wider">
-          {isFallback ? '[ OFFLINE SIM ]' : '[ NEBIUS 3-TIER ]'}
+        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">
+          {isFallback ? 'OFFLINE SIMULATOR' : 'NEBIUS 3-TIER ACTIVE'}
         </span>
       </div>
     </div>
