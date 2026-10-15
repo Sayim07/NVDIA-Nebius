@@ -57,33 +57,38 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
   return (
     <div className="space-y-6">
       {/* Top Banner: The $3,000 Tavily Innovation Hook */}
-      <TiltCard className="p-4 bg-slate-900/90 border-slate-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-cyan-950/60 border border-cyan-500/30 text-cyan-400">
+      <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center space-x-3.5">
+            <div className="p-2.5 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                Privacy-Preserving Tavily Airlock
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800/60">
-                  Target: $3,000 Best Use of Tavily
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono tracking-wider text-cyan-400">
+                  [ 02 // PRIVACY AIRLOCK ]
                 </span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800/60 font-semibold">
+                  TARGET: $3,000 BEST USE OF TAVILY
+                </span>
+              </div>
+              <h2 className="text-base font-bold text-white tracking-tight uppercase mt-0.5">
+                Privacy-Preserving Tavily Airlock <span className="font-editorial italic font-normal text-cyan-400 lowercase text-lg tracking-normal">pipeline</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Zero-PII sanitization engine combining deterministic regex firewalls with Tier 1 Nemotron Nano before web dispatch.
+              <p className="text-xs text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
+                Deterministic regex firewalls + Tier 1 Nemotron Nano scrub proprietary PII, corporate domains, and API tokens before web dispatch.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs font-mono">
-            <div className="flex items-center px-2 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
-              <Clock className="w-3.5 h-3.5 text-cyan-400 mr-1.5" />
-              <span>{diff.scrub_latency_ms}ms</span>
+          <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-center shrink-0">
+            <div className="flex items-center px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
+              <Clock className="w-3 h-3 text-cyan-400 mr-1.5" />
+              <span>[ {diff.scrub_latency_ms}ms ]</span>
             </div>
-            <div className="flex items-center px-2 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
-              <Database className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
-              <span>{isCached ? '24h Cache HIT' : 'Live Search'}</span>
+            <div className="flex items-center px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
+              <Database className="w-3 h-3 text-emerald-400 mr-1.5" />
+              <span>[ {isCached ? '24h CACHE HIT' : 'LIVE DISPATCH'} ]</span>
             </div>
           </div>
         </div>
@@ -92,35 +97,35 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
       {/* Side-by-Side Visual Diff Card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Raw Internal Context */}
-        <TiltCard className="p-5 bg-slate-900/90 border-slate-800">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+        <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
             <div className="flex items-center space-x-2">
               <Lock className="w-4 h-4 text-rose-400" />
               <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200">
-                Internal Context (Pre-Airlock)
+                [ RAW INTERNAL CONTEXT // PRE-AIRLOCK ]
               </h3>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950/80 text-rose-300 border border-rose-800/60 flex items-center gap-1">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950/80 text-rose-300 border border-rose-800/60 flex items-center gap-1 font-semibold">
               <ShieldAlert className="w-3 h-3" />
-              Blocked PII Detected
+              PROPRIETARY PII DETECTED
             </span>
           </div>
 
-          <div className="p-3.5 rounded-md bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono leading-relaxed min-h-[140px]">
+          <div className="p-4 rounded bg-slate-950 border border-slate-800/90 text-xs text-slate-300 font-mono leading-relaxed min-h-[140px]">
             {diff.raw_context}
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-800/80">
-            <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2">
-              Scrubbed Entities ({diff.scrubbed_entities.length})
+            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2">
+              [ SCRUBBED ENTITIES // COUNT: {diff.scrubbed_entities.length} ]
             </div>
             <div className="flex flex-wrap gap-1.5">
               {diff.scrubbed_entities.map((item, idx) => (
                 <span
                   key={idx}
-                  className="px-2 py-0.5 rounded text-[11px] font-mono bg-rose-950/60 text-rose-300 border border-rose-800/50"
+                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950/60 text-rose-300 border border-rose-800/50"
                 >
-                  [REDACTED] {item}
+                  [REDACTED: {item}]
                 </span>
               ))}
             </div>
@@ -128,39 +133,39 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
         </TiltCard>
 
         {/* Right Column: Sanitized Web Query */}
-        <TiltCard className="p-5 bg-slate-900/90 border-slate-800">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800">
+        <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-emerald-400" />
               <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200">
-                Sanitized Tavily Search Query
+                [ SANITIZED TAVILY QUERY // DISPATCHED ]
               </h3>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 flex items-center gap-1">
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 flex items-center gap-1 font-semibold">
               <ShieldCheck className="w-3 h-3" />
-              100% Zero-Trust Approved
+              100% ZERO-TRUST APPROVED
             </span>
           </div>
 
-          <div className="p-3.5 rounded-md bg-slate-950 border border-slate-800 text-xs text-emerald-300 font-mono leading-relaxed min-h-[140px]">
+          <div className="p-4 rounded bg-slate-950 border border-slate-800/90 text-xs text-emerald-300 font-mono leading-relaxed min-h-[140px]">
             {diff.sanitized_query}
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
-            <span>Query Length: {diff.sanitized_query.length} chars</span>
-            <span className="text-emerald-400">Tavily Depth: Basic (1 credit)</span>
+            <span>[ QUERY LENGTH: {diff.sanitized_query.length} CHARS ]</span>
+            <span className="text-emerald-400">[ TAVILY DEPTH: BASIC (1 CREDIT) ]</span>
           </div>
         </TiltCard>
       </div>
 
       {/* Discovered CVE Advisories Feed */}
-      <TiltCard className="p-5 bg-slate-900/90 border-slate-800">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+      <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
           <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200 flex items-center gap-2">
-            Discovered Intelligence & Extracted Advisories ({sources.length})
+            <span>[ DISCOVERED INTELLIGENCE & EXTRACTED ADVISORIES // {sources.length} ]</span>
           </h3>
           <span className="text-[10px] font-mono text-slate-500">
-            Cached for 24h in SQLite (hermesshield.db)
+            [ CACHED 24H: hermesshield.db ]
           </span>
         </div>
 
@@ -168,16 +173,16 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
           {sources.map((src, i) => (
             <div
               key={i}
-              className="p-3.5 rounded-md bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col justify-between space-y-2"
+              className="p-4 rounded bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col justify-between space-y-3"
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="text-xs font-semibold text-slate-200 leading-snug">
+                  <h4 className="text-xs font-bold text-slate-100 uppercase tracking-tight leading-snug">
                     {src.title}
                   </h4>
                   {src.cve_id && (
-                    <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-mono bg-rose-950 text-rose-300 border border-rose-800/50">
-                      {src.cve_id}
+                    <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950 text-rose-300 border border-rose-800/50 font-bold">
+                      [ {src.cve_id} ]
                     </span>
                   )}
                 </div>
@@ -187,14 +192,14 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
               </div>
 
               <div className="pt-2 border-t border-slate-900 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                <span>Score: {(src.score * 100).toFixed(0)}%</span>
+                <span>[ RELEVANCE: {(src.score * 100).toFixed(0)}% ]</span>
                 <a
                   href={src.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1 text-cyan-400 hover:text-cyan-300 transition-colors"
                 >
-                  <span>Source URL</span>
+                  <span>[ SOURCE INTEL ]</span>
                   <ExternalLink className="w-2.5 h-2.5" />
                 </a>
               </div>

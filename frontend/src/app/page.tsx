@@ -27,6 +27,7 @@ import {
   triggerOvernightScout,
 } from '@/lib/api';
 import { Header } from '@/components/Header';
+import { EditorialHero } from '@/components/EditorialHero';
 import { WorkspacePanel } from '@/components/WorkspacePanel';
 import { TavilyAirlock } from '@/components/TavilyAirlock';
 import { NemoClawHUD } from '@/components/NemoClawHUD';
@@ -34,10 +35,10 @@ import { SkillStudio } from '@/components/SkillStudio';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 
 const TABS = [
-  { id: 'workspace', label: 'Executive Workspace', icon: Terminal },
-  { id: 'airlock', label: 'Tavily Privacy Airlock', icon: ShieldAlert },
-  { id: 'security', label: 'NemoClaw Security HUD', icon: Cpu },
-  { id: 'skills', label: 'Hermes Skill Studio', icon: Brain },
+  { id: 'workspace', label: '01 // WORKSPACE', sub: 'Executive Runner', icon: Terminal },
+  { id: 'airlock', label: '02 // AIRLOCK', sub: 'Tavily Privacy Filter', icon: ShieldAlert },
+  { id: 'security', label: '03 // NEMOCLAW', sub: 'Out-of-Process Guard', icon: Cpu },
+  { id: 'skills', label: '04 // SKILLS', sub: 'Episodic Memory & Studio', icon: Brain },
 ];
 
 export default function Dashboard() {
@@ -118,10 +119,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-300">
       <Header
         telemetry={telemetry}
         health={health}
+        activeTab={activeTab}
+        onSelectTab={(tab) => setActiveTab(tab)}
         onOpenCommand={() => {
           const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
           document.dispatchEvent(down);
@@ -151,36 +154,57 @@ export default function Dashboard() {
         }}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
-        {/* 4-Panel Navigation Tabs */}
-        <div className="flex items-center space-x-1 sm:space-x-2 border-b border-slate-800 pb-3 mb-6 overflow-x-auto">
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-colors whitespace-nowrap ${
-                  isActive ? 'text-slate-100' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
-                <span>{tab.label}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="active-tab"
-                    className="absolute inset-0 bg-slate-800/80 border border-slate-700/60 rounded-lg -z-10 shadow-sm"
-                    transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-                  />
-                )}
-              </button>
-            );
-          })}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+        {/* Editorial Hero Statement inspired by reference typography */}
+        <EditorialHero />
+
+        {/* 4-Panel Navigation Rails */}
+        <div>
+          <div className="flex items-center justify-between pb-2 mb-3">
+            <span className="text-[10px] font-mono tracking-widest text-slate-500 uppercase">
+              [ NAVIGATION // RUNTIME MODULES ]
+            </span>
+            <span className="text-[10px] font-mono text-emerald-400">
+              [ ACTIVE: {activeTab.toUpperCase()} ]
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 border-b border-slate-900 pb-4">
+            {TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`p-3 rounded text-left transition-all relative border ${
+                    isActive
+                      ? 'bg-slate-900/90 border-slate-700 text-white shadow-sm'
+                      : 'bg-slate-950/60 border-slate-900 text-slate-400 hover:text-slate-200 hover:border-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2 font-mono text-xs font-bold">
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                    <span>[ {tab.label} ]</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-mono mt-1 pl-5">
+                    {tab.sub}
+                  </div>
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-nav-glow"
+                      className="absolute inset-0 border border-emerald-500/30 rounded pointer-events-none"
+                      transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Tab Views */}
-        <div>
+        <div className="pt-2">
           {activeTab === 'workspace' && (
             <WorkspacePanel
               onRun={handleRunAgent}
@@ -213,11 +237,19 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Global Footer */}
-      <footer className="border-t border-slate-900 py-4 px-4 text-center text-xs font-mono text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>HermesShield v1.0.0 — Sovereign Personal AI Control Center</span>
-          <span className="text-slate-600">Built for Nebius x NVIDIA Hackathon 2026</span>
+      {/* Global Perimeter Footer */}
+      <footer className="border-t border-slate-900/90 py-5 px-4 text-xs font-mono text-slate-500 bg-slate-950">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center space-x-2">
+            <span className="font-bold text-slate-400">[ HERMESSHIELD° V1.0.0 ]</span>
+            <span>—</span>
+            <span>[ ZERO-TRUST SOVEREIGN PERSONAL AI ]</span>
+          </div>
+          <div className="flex items-center space-x-3 text-slate-600">
+            <span>[ NEBIUS TOKEN FACTORY ]</span>
+            <span>[ NVIDIA NEMOCLAW ]</span>
+            <span className="text-emerald-400 font-semibold">[ DEVPOST 2026 ]</span>
+          </div>
         </div>
       </footer>
     </div>
