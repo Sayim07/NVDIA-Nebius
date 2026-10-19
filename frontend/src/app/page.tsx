@@ -29,8 +29,8 @@ import {
   compileSkill,
   triggerOvernightScout,
 } from '@/lib/api';
-import { Header } from '@/components/Header';
-import { EditorialHero } from '@/components/EditorialHero';
+import { Navbar } from '@/components/sections/Navbar';
+import { Hero } from '@/components/sections/Hero';
 import { MetricsRibbon } from '@/components/MetricsRibbon';
 import { ArchitectureShowcase } from '@/components/ArchitectureShowcase';
 import { AirlockSection } from '@/components/AirlockSection';
@@ -57,6 +57,8 @@ export default function Dashboard() {
   const [securityState, setSecurityState] = useState<SecurityStateResponse | null>(null);
   const [memoryState, setMemoryState] = useState<MemoryStateResponse | null>(null);
   const consoleRef = useRef<HTMLDivElement>(null);
+
+  const isFallback = health?.is_fallback ?? true;
 
   // Initial handshake and state loading
   useEffect(() => {
@@ -134,10 +136,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500/20 selection:text-emerald-300">
-      {/* Top Professional Navigation Header */}
-      <Header
-        health={health}
+    <div className="min-h-screen flex flex-col bg-[#07090D] text-slate-100 font-sans selection:bg-nvidia/20 selection:text-nvidia">
+      {/* Section 1: Modern Responsive Navbar */}
+      <Navbar
         onOpenCommand={() => {
           const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
           document.dispatchEvent(down);
@@ -172,13 +173,13 @@ export default function Dashboard() {
         }}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-16">
-        {/* Section 1: Hero Section */}
-        <EditorialHero
-          onScrollToConsole={scrollToConsole}
-          onSimulateAttack={handleSimulateAttack}
-        />
+      {/* Section 2: High-Impact Hero with Italic Accent & Trust Row */}
+      <Hero
+        onScrollToConsole={scrollToConsole}
+        onSimulateAttack={handleSimulateAttack}
+      />
 
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 py-6 space-y-16">
         {/* Section 2: Key Proof Metrics */}
         <MetricsRibbon />
 
@@ -199,16 +200,19 @@ export default function Dashboard() {
         />
 
         {/* Section 5: The Live Interactive Console */}
-        <section id="console" ref={consoleRef} className="pt-8 pb-16 border-t border-slate-900/80">
+        <section id="console" ref={consoleRef} className="pt-8 pb-16 border-t border-white/[0.08]">
           {/* Console Header Bar */}
-          <div className="p-5 rounded-t-xl bg-slate-900 border border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center space-x-2 text-[10px] font-mono tracking-widest text-emerald-400 uppercase mb-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>[ INTERACTIVE EXECUTION ENVIRONMENT ]</span>
+          <div className="p-5 rounded-t-2xl bg-surface-1 border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2.5">
+                <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-surface-2 border border-white/[0.08] text-[11px] font-mono text-white/70">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isFallback ? 'bg-warning animate-pulse' : 'bg-nvidia animate-pulse'}`} />
+                  <span>{isFallback ? 'Offline Simulation' : 'Nemotron Live'}</span>
+                </span>
+                <span className="text-xs text-white/40 font-mono">Interactive Execution Runtime</span>
               </div>
-              <h2 className="text-xl font-black uppercase text-white tracking-tight flex items-center gap-2">
-                HERMESSHIELD LIVE CONSOLE <span className="font-editorial italic font-normal text-emerald-400 lowercase text-2xl tracking-normal">runtime</span>
+              <h2 className="text-xl font-heading font-bold text-white tracking-tight flex items-center gap-2">
+                HermesShield live console <span className="font-editorial italic font-normal text-nvidia text-2xl tracking-normal">runtime</span>
               </h2>
             </div>
 

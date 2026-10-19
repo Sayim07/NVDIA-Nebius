@@ -9,31 +9,52 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        canvas: "#020617", // slate-950
+        background: "#07090D",
+        foreground: "#F8FAFC",
+        canvas: "#07090D",
         surface: {
-          1: "#0f172a", // slate-900
-          2: "#1e293b", // slate-800
+          DEFAULT: "#0D1117",
+          1: "#0E131B",
+          2: "#151C27",
+          3: "#1C2533",
         },
         border: {
-          subtle: "#334155", // slate-700
+          subtle: "rgba(255, 255, 255, 0.08)",
+          DEFAULT: "rgba(255, 255, 255, 0.10)",
+          strong: "rgba(255, 255, 255, 0.16)",
         },
-        cyber: {
-          emerald: "#10b981",
-          rose: "#f43f5e",
-          cyan: "#06b6d4",
-          violet: "#8b5cf6",
-          amber: "#f59e0b",
+        nvidia: {
+          DEFAULT: "#76B900",
+          hover: "#87D300",
+          glow: "rgba(118, 185, 0, 0.25)",
+        },
+        cyan: {
+          DEFAULT: "#22D3EE",
+          hover: "#38BDF8",
+          glow: "rgba(34, 211, 238, 0.25)",
+        },
+        threat: {
+          DEFAULT: "#EF4444",
+          surface: "rgba(239, 68, 68, 0.12)",
+          border: "rgba(239, 68, 68, 0.35)",
+        },
+        warning: {
+          DEFAULT: "#F59E0B",
+          surface: "rgba(245, 158, 11, 0.12)",
+          border: "rgba(245, 158, 11, 0.35)",
         },
       },
       fontFamily: {
-        sans: ["'Plus Jakarta Sans'", "var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["'Plus Jakarta Sans'", "system-ui", "sans-serif"],
+        sans: ["'Inter'", "'Geist'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        heading: ["'Space Grotesk'", "sans-serif"],
         serif: ["'Instrument Serif'", "Georgia", "serif"],
-        mono: ["'JetBrains Mono'", "var(--font-mono)", "monospace"],
+        mono: ["'Geist Mono'", "'JetBrains Mono'", "monospace"],
+      },
+      borderRadius: {
+        '2xl': '16px',
       },
     },
   },
   plugins: [],
 };
+

@@ -88,7 +88,40 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 5. Hackathon Evaluation Presets
+## 5. Cloud Deployment Guide (Frontend: Vercel | Backend: Render)
+
+Deploying the Next.js frontend to **Vercel** and the FastAPI backend to **Render** is the recommended production architecture:
+
+### 5.1 Backend Deployment on Render (FastAPI)
+1. Fork or push this repository to GitHub.
+2. Sign in to [Render](https://dashboard.render.com).
+3. Click **New +** → **Blueprint** and select your repository (or choose **Web Service**).
+   - Render automatically reads [`render.yaml`](./render.yaml).
+   - **Root Directory:** Repository root (`.`)
+   - **Build Command:** `pip install -r backend/requirements.txt`
+   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Health Check Path:** `/health`
+4. In the Render Dashboard under **Environment**, add your secret keys:
+   - `NEBIUS_API_KEY`: Your Nebius Token Factory API Key
+   - `TAVILY_API_KEY`: Your Tavily Search API Key
+   - `CONTEXT_DEV_API_KEY`: Your Context.dev API Key (optional)
+   - `FRONTEND_URL`: `https://your-project.vercel.app` (optional, CORS allows all `*.vercel.app` automatically)
+5. Deploy the service and copy your public URL (e.g., `https://hermesshield-api.onrender.com`).
+
+### 5.2 Frontend Deployment on Vercel (Next.js 14)
+1. Sign in to [Vercel](https://vercel.com) and click **Add New...** → **Project**.
+2. Select your repository.
+3. In the configuration screen:
+   - **Framework Preset:** Next.js (auto-detected)
+   - **Root Directory:** Click `Edit` and select `frontend`
+4. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: Your Render backend URL (e.g. `https://hermesshield-api.onrender.com`)
+5. Click **Deploy**. Vercel will build the optimized production bundle with global CDN edge distribution.
+
+---
+
+## 6. Hackathon Evaluation Presets
+
 
 The dashboard provides 3 one-click evaluation presets in the **Executive Workspace** tab:
 1. **Architecture Sync & CVE Scan (Preset A):** Demonstrates local manifest ingestion, Tavily Airlock PII scrubbing, live Mitre/CVE discovery, and Tier 2 briefing generation.
@@ -100,7 +133,33 @@ Navigate to the **OpenShell & NemoClaw Security HUD** tab and click **"Simulate 
 
 ---
 
-## 6. Project Documentation
+## 7. How to Edit the Site (For Non-Technical Teammates)
+
+All copy, external links, proof metrics, trust logos, quickstart steps, and roadmap items are centralized in a single configuration file:
+👉 **`frontend/src/content/content.ts`** (also mirrored at `frontend/content/content.ts`)
+
+You can edit this file directly without touching any React components, CSS, or backend logic:
+
+- **Change headline, pitch, or subtext:** Edit `content.hero.titleLead`, `content.hero.titleAccent`, or `content.hero.subtext`.
+- **Change links (GitHub, Devpost, Demo, Video):** Update the `content.links` object (`github`, `liveDemo`, `youtube`, `devpost`).
+- **Swap the YouTube walkthrough:** Change `content.video.youtubeId` or `content.links.youtube`.
+- **Update metrics:** Edit the numbers and captions in the `content.metrics` array.
+- **Update roadmap or builder feedback:** Edit `content.roadmap.futureItems` or `content.roadmap.hackathonFeedback`.
+
+### Running Locally
+1. Start the FastAPI backend:
+   ```bash
+   cd backend && uvicorn main:app --reload --port 8000
+   ```
+2. Start the Next.js frontend:
+   ```bash
+   cd frontend && npm run dev
+   ```
+3. Open `http://localhost:3000` in your browser. Any edits in `content.ts` update instantly via hot reload.
+
+---
+
+## 8. Project Documentation
 - [PRD.md](./brain/PRD.md) — Product Requirements Document
 - [TRD.md](./brain/TRD.md) — Technical Requirements Document
 - [AppFlow.md](./brain/AppFlow.md) — System Architecture & Flows
@@ -109,8 +168,11 @@ Navigate to the **OpenShell & NemoClaw Security HUD** tab and click **"Simulate 
 - [ImplementationPlan.md](./brain/ImplementationPlan.md) — Phased Execution Plan
 - [Tracker.md](./brain/Tracker.md) — Development Progress & Decisions
 - [Rules.md](./brain/Rules.md) — AI Coding Rules & Constraints
+- [CHANGELOG.md](./CHANGELOG.md) — Detailed UI Redesign Progress
 
 ---
 
-## 7. License
+## 9. License
 This project is open-source under the [MIT License](./LICENSE).
+
+

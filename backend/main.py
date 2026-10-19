@@ -55,10 +55,16 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration for Next.js frontend
+# CORS configuration for Next.js frontend (Local, Vercel, and Custom Domains)
+frontend_url = os.getenv("FRONTEND_URL")
+allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+if frontend_url:
+    allowed_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,9 +77,20 @@ app.include_router(memory.router)
 app.include_router(jobs.router)
 app.include_router(context_dev.router)
 
+@app.get("/", tags=["System"])
+async def root():
+    """Root endpoint for Render health check."""
+    return {"status": "ok", "app": APP_NAME, "version": APP_VERSION}
+
+@app.get("/health", tags=["System"])
+async def health():
+    """Generic health check for cloud load balancers."""
+    return {"status": "ok"}
+
 @app.get("/api/v1/health", response_model=HealthStatus, tags=["System"])
 async def get_health():
     """System health check and connection status indicator."""
+
     nebius_connected = bool(os.getenv("NEBIUS_API_KEY"))
     tavily_connected = bool(os.getenv("TAVILY_API_KEY"))
     context_dev_connected = bool(os.getenv("CONTEXT_DEV_API_KEY"))
@@ -91,4 +108,6 @@ async def get_health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)
+
