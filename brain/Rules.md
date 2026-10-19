@@ -127,3 +127,15 @@ A feature is marked as **Done** only when:
 2. It executes without raising unhandled 500 exceptions in both live and fallback simulation modes.
 3. It has zero TypeScript compile errors (`npm run build` succeeds).
 4. Its status is updated in [Tracker.md §1](./Tracker.md#1-project-phase-trackers).
+
+---
+
+## 11. Context.dev Web Data Integration Conventions
+- **Environment Secret:** `CONTEXT_DEV_API_KEY` (configured in `backend/.env`, read via `os.environ`, never exposed to client).
+- **Single Server-Side Wrapper:** `backend/services/context_client.py` (`ContextDevClient`). All Context.dev calls across the system must route through this wrapper rather than calling raw SDK or REST primitives directly.
+- **Endpoints Selected for Personal AI:**
+  - `POST /web/search` (from 1 credit / 10 results) — Web search for ranked intelligence and CVE/advisory discovery. Docs: [https://docs.context.dev/api-reference/web-scraping/search](https://docs.context.dev/api-reference/web-scraping/search)
+  - `POST /web/scrape` (from 1 credit / page) — GFM Markdown page extraction with `mainContentOnly` filtering. Docs: [https://docs.context.dev/api-reference/web-scraping/scrape](https://docs.context.dev/api-reference/web-scraping/scrape)
+  - `POST /web/answers` (10 credits in fast mode) — Direct web research answers for personal briefings. Docs: [https://docs.context.dev/api-reference/web-extraction/answers](https://docs.context.dev/api-reference/web-extraction/answers)
+- **API Router:** `backend/routers/context_dev.py` mounted at `/api/v1/context` (`/search`, `/scrape`, `/answers`, `/status`).
+- **Resilience:** Honors 429 `Retry-After`, logs structured telemetry, and gracefully returns `is_fallback: True` if the API key is missing or calls fail.

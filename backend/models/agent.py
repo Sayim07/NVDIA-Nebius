@@ -14,6 +14,7 @@ class HealthStatus(BaseModel):
     is_fallback: bool = Field(default=False)
     nebius_connected: bool = Field(default=False)
     tavily_connected: bool = Field(default=False)
+    context_dev_connected: bool = Field(default=False)
 
 class AgentSecuritySummary(BaseModel):
     commands_executed: List[str] = Field(default_factory=list)

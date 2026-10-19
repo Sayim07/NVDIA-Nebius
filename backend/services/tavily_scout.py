@@ -123,7 +123,26 @@ def search_tavily(sanitized_query: str, diff: AirlockDiff) -> AirlockResult:
     tavily_key = os.getenv("TAVILY_API_KEY")
 
     if not tavily_key:
-        logger.info("TAVILY_API_KEY not configured. Using pre-seeded offline fallback advisories.")
+        from backend.services.context_client import context_client
+        if context_client.is_configured:
+            logger.info("TAVILY_API_KEY unset. Routing web intelligence through Context.dev (POST /web/search)...")
+            ctx_res = context_client.search(query=sanitized_query, num_results=TAVILY_MAX_SEARCH_RESULTS)
+            raw_results = ctx_res.get("results", [])
+            if raw_results:
+                sources = [
+                    TavilySource(
+                        title=item.get("title", "Advisory"),
+                        url=item.get("url", ""),
+                        content=item.get("description", ""),
+                        score=0.95 if item.get("relevance") == "high" else 0.85,
+                        cve_id=next((word for word in item.get("title", "").split() if word.startswith("CVE-")), None)
+                    )
+                    for item in raw_results
+                ]
+                store_cached_search(query_hash, sanitized_query, raw_results, "")
+                return AirlockResult(diff=diff, sources=sources, is_cached=False)
+
+        logger.info("TAVILY_API_KEY and Context.dev not configured. Using pre-seeded offline fallback advisories.")
         fallback_sources = load_fallback_cves()
         return AirlockResult(diff=diff, sources=fallback_sources, is_cached=False)
 
