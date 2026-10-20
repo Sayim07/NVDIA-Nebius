@@ -9,6 +9,15 @@ export interface NavItem {
   href: string;
 }
 
+export interface OverlayMenuItem {
+  id: string;
+  label: string;
+  description: string;
+  href?: string;
+  action?: 'video' | 'replay' | 'app';
+  badge?: string;
+}
+
 export interface MetricItem {
   value: string;
   numericValue?: number;
@@ -74,6 +83,7 @@ export interface ContentConfig {
   nav: {
     logoText: string;
     links: NavItem[];
+    overlayMenu: OverlayMenuItem[];
     cta: string;
     searchLabel: string;
   };
@@ -209,6 +219,16 @@ export const content: ContentConfig = {
       { label: 'Airlock', href: '#airlock' },
       { label: 'Savings', href: '#savings' },
       { label: 'Live demo', href: '#demo' },
+    ],
+    overlayMenu: [
+      { id: 'overview', label: 'Overview', description: 'Product introduction & core zero-trust concept', action: 'replay' },
+      { id: 'how-it-works', label: 'How it works', description: '4-step privacy pipeline & sovereign architecture', href: '/app/how-it-works' },
+      { id: 'airlock', label: 'Privacy airlock', description: 'Zero-PII web search redaction diff & live test', href: '/app/airlock' },
+      { id: 'costs', label: 'Cost savings', description: 'FinOps telemetry & 82.4% token reduction breakdown', href: '/app/costs' },
+      { id: 'demo', label: 'Live demo', description: 'Executive workspace & preset briefings', href: '/app' },
+      { id: 'video', label: 'Watch video', description: '3-minute full architecture walkthrough', action: 'video' },
+      { id: 'app', label: 'Open the app', description: 'Launch the Cyber Command Center dashboard', href: '/app' },
+      { id: 'github', label: 'GitHub', description: 'Source code, policies, and documentation', href: 'https://github.com/Sayim07/NVDIA-Nebius' },
     ],
     cta: 'Try the demo',
     searchLabel: 'Search',

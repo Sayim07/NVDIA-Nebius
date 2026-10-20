@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { content } from '@/content/content';
 import { ShieldCheck, Search, Menu, X, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 interface NavbarProps {
   onOpenCommand: () => void;
@@ -69,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ))}
         </nav>
 
-        {/* Right Actions: ⌘K icon button · "Try the demo" */}
+        {/* Right Actions: ⌘K icon button · ThemeToggle · "Try the demo" */}
         <div className="flex items-center space-x-2.5 shrink-0">
           {/* ⌘K Trigger Button */}
           <button
@@ -82,6 +83,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               ⌘K
             </span>
           </button>
+
+          {/* Theme Toggle (Dark/Light mode switch) */}
+          <ThemeToggle />
 
           {/* Primary CTA: "Try the demo" */}
           <button
@@ -128,13 +132,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               ))}
             </div>
 
-            <div className="pt-3 border-t border-border">
+            <div className="pt-3 border-t border-border flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs text-ink-muted">
+                <span>Theme:</span>
+                <ThemeToggle />
+              </div>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onScrollToConsole();
                 }}
-                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all shadow-soft"
+                className="flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all shadow-soft"
               >
                 <span>{content.nav.cta}</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[2]" />

@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 
 // Dynamic import with SSR false for Three.js / R3F
-const DynamicShieldScene = dynamic(
-  () => import('@/components/three/ShieldScene'),
+const DynamicCinematicScene = dynamic(
+  () => import('@/components/three/CinematicScene'),
   {
     ssr: false,
     loading: () => <ShieldPosterFallback />,
@@ -53,10 +53,14 @@ export function ShieldPosterFallback() {
 }
 
 interface LandingHero3DProps {
+  progress?: number;
   isZooming?: boolean;
 }
 
-export default function LandingHero3D({ isZooming = false }: LandingHero3DProps) {
+export default function LandingHero3D({
+  progress = 1.0,
+  isZooming = false,
+}: LandingHero3DProps) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [hasWebGL, setHasWebGL] = useState(true);
@@ -87,9 +91,13 @@ export default function LandingHero3D({ isZooming = false }: LandingHero3DProps)
   }
 
   return (
-    <div className="w-full h-full relative overflow-hidden select-none">
+    <div className="w-full h-full relative overflow-visible select-none">
       <React.Suspense fallback={<ShieldPosterFallback />}>
-        <DynamicShieldScene isDark={isDark} isZooming={isZooming} />
+        <DynamicCinematicScene
+          progress={progress}
+          isDark={isDark}
+          isZooming={isZooming}
+        />
       </React.Suspense>
     </div>
   );
