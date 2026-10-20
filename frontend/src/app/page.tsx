@@ -362,7 +362,7 @@ export default function LandingPage() {
         <div ref={topBarRef as any} className="relative z-30 w-full">
           <LandingNavbar
             onGetStarted={handleGetStarted}
-            onOpenMenu={() => setIsMenuOpen(true)}
+            onOpenVideo={() => setIsVideoOpen(true)}
             isTransitioning={isTransitioning}
           />
         </div>

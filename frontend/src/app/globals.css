@@ -19,6 +19,9 @@
   --warning: #FBBF24;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.45);
   --dot-grid: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.25);
+  --scrollbar-thumb-hover: #34D399;
+  --scrollbar-track: rgba(16, 28, 24, 0.85);
 }
 
 .light {
@@ -37,6 +40,9 @@
   --warning: #B54708;
   --card-shadow: 0 1px 3px rgba(15, 26, 23, 0.05), 0 8px 24px rgba(15, 26, 23, 0.06);
   --dot-grid: rgba(15, 26, 23, 0.07);
+  --scrollbar-thumb: rgba(15, 26, 23, 0.25);
+  --scrollbar-thumb-hover: #0B6E4F;
+  --scrollbar-track: rgba(238, 241, 236, 0.85);
 }
 
 body {
@@ -70,23 +76,38 @@ h1, h2, h3, h4, .font-heading {
   letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbar */
+/* Custom Visible, Elegant & Grabbable Scrollbar across all pages and containers */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background-color: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--primary);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
 }
 
 /* Command Palette Overlay & Window */

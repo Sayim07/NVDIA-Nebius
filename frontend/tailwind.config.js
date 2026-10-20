@@ -10,9 +10,23 @@ module.exports = {
     extend: {
       colors: {
         bg: "var(--bg)",
+        background: "var(--bg)",
+        foreground: "var(--text)",
+        card: {
+          DEFAULT: "var(--surface)",
+          foreground: "var(--text)",
+        },
+        popover: {
+          DEFAULT: "var(--surface)",
+          foreground: "var(--text)",
+        },
         surface: {
           DEFAULT: "var(--surface)",
           2: "var(--surface-2)",
+        },
+        secondary: {
+          DEFAULT: "var(--surface-2)",
+          foreground: "var(--text)",
         },
         border: {
           DEFAULT: "var(--border)",
@@ -22,10 +36,12 @@ module.exports = {
         },
         muted: {
           DEFAULT: "var(--muted)",
+          foreground: "var(--muted)",
         },
         primary: {
           DEFAULT: "var(--primary)",
           fg: "var(--primary-fg)",
+          foreground: "var(--primary-fg)",
         },
         highlight: {
           DEFAULT: "var(--highlight)",

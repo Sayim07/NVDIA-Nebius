@@ -1,326 +1,369 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
-  Terminal,
+  ArrowRight,
+  Lock,
   ShieldAlert,
-  Cpu,
+  BarChart2,
   Brain,
-  Layers,
-  Sparkles,
-  ExternalLink,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
   ChevronRight,
+  Zap,
+  TrendingDown,
 } from 'lucide-react';
-import {
-  HealthStatus,
-  FinOpsTelemetry,
-  AgentRunResponse,
-  SecurityStateResponse,
-  MemoryStateResponse,
-} from '@/lib/types';
-import {
-  fetchHealth,
-  runAgent,
-  fetchSecurityState,
-  simulateAttack,
-  fetchMemoryState,
-  updateMemory,
-  compileSkill,
-  triggerOvernightScout,
-} from '@/lib/api';
-import { Navbar } from '@/components/sections/Navbar';
-import { Hero } from '@/components/sections/Hero';
-import { MetricsRibbon } from '@/components/MetricsRibbon';
-import { ArchitectureShowcase } from '@/components/ArchitectureShowcase';
-import { AirlockSection } from '@/components/AirlockSection';
-import { FinOpsHUD } from '@/components/FinOpsHUD';
-import { WorkspacePanel } from '@/components/WorkspacePanel';
-import { TavilyAirlock } from '@/components/TavilyAirlock';
-import { NemoClawHUD } from '@/components/NemoClawHUD';
-import { SkillStudio } from '@/components/SkillStudio';
-import { CommandPalette } from '@/components/ui/CommandPalette';
+import { useAppState } from '@/components/app/AppStateProvider';
+import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 
-const CONSOLE_TABS = [
-  { id: 'workspace', label: '01 // WORKSPACE RUNNER', sub: 'Executive Briefings & Presets', icon: Terminal },
-  { id: 'airlock', label: '02 // TAVILY AIRLOCK', sub: 'Zero-PII Search Diff', icon: ShieldAlert },
-  { id: 'security', label: '03 // NEMOCLAW GUARD', sub: 'Out-of-Process Ledger', icon: Cpu },
-  { id: 'skills', label: '04 // HERMES SKILLS', sub: 'Episodic Memory & YAML', icon: Brain },
-];
+// ─── Stat cards ───────────────────────────────────────────────────────────────
+interface StatCardProps {
+  label: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  caption: string;
+  accent: 'primary' | 'info' | 'warning' | 'highlight';
+}
 
-export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('workspace');
-  const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [telemetry, setTelemetry] = useState<FinOpsTelemetry | null>(null);
-  const [agentResult, setAgentResult] = useState<AgentRunResponse | null>(null);
-  const [loadingRun, setLoadingRun] = useState(false);
-  const [securityState, setSecurityState] = useState<SecurityStateResponse | null>(null);
-  const [memoryState, setMemoryState] = useState<MemoryStateResponse | null>(null);
-  const consoleRef = useRef<HTMLDivElement>(null);
-
-  const isFallback = health?.is_fallback ?? true;
-
-  // Initial handshake and state loading
-  useEffect(() => {
-    async function init() {
-      try {
-        const h = await fetchHealth();
-        setHealth(h);
-      } catch (e) {
-        console.warn('Backend offline or health unreachable:', e);
-      }
-
-      try {
-        const sec = await fetchSecurityState();
-        setSecurityState(sec);
-      } catch (e) {
-        console.warn('Security state unreachable:', e);
-      }
-
-      try {
-        const mem = await fetchMemoryState();
-        setMemoryState(mem);
-      } catch (e) {
-        console.warn('Memory state unreachable:', e);
-      }
-    }
-    init();
-  }, []);
-
-  const scrollToConsole = () => {
-    const el = document.getElementById('console');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleRunAgent = async (instruction: string, workspaceId: string, presetName?: string) => {
-    setLoadingRun(true);
-    try {
-      const res = await runAgent({ instruction, workspace_id: workspaceId, preset_name: presetName });
-      setAgentResult(res);
-      setTelemetry(res.finops);
-      // Refresh security audit log
-      const sec = await fetchSecurityState();
-      setSecurityState(sec);
-    } catch (e) {
-      console.error('Agent execution error:', e);
-    } finally {
-      setLoadingRun(false);
-    }
-  };
-
-  const handleSimulateAttack = async () => {
-    setActiveTab('security');
-    scrollToConsole();
-    const res = await simulateAttack();
-    const sec = await fetchSecurityState();
-    setSecurityState(sec);
-    return res;
-  };
-
-  const handleSaveMemory = async (newMarkdown: string) => {
-    await updateMemory(newMarkdown);
-    const mem = await fetchMemoryState();
-    setMemoryState(mem);
-  };
-
-  const handleCompileSkill = async (feedbackText: string) => {
-    await compileSkill({ user_feedback: feedbackText });
-    const mem = await fetchMemoryState();
-    setMemoryState(mem);
-  };
-
-  const handleTriggerScout = async () => {
-    return await triggerOvernightScout();
+function StatCard({ label, value, prefix, suffix, decimals, caption, accent }: StatCardProps) {
+  const accentMap = {
+    primary: 'text-primary bg-primary/10 border-primary/20',
+    info: 'text-info bg-info/10 border-info/20',
+    warning: 'text-warning bg-warning/10 border-warning/20',
+    highlight: 'text-highlight bg-highlight/10 border-highlight/20',
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-ink font-sans selection:bg-primary/10 selection:text-primary">
-      {/* Section 1: Modern Responsive Navbar */}
-      <Navbar
+    <div className={`rounded-2xl border p-5 ${accentMap[accent]} transition-colors`}>
+      <div className="text-2xl sm:text-3xl font-heading font-bold tabular-nums">
+        <AnimatedCounter
+          value={value}
+          prefix={prefix}
+          suffix={suffix}
+          decimals={decimals ?? 0}
+          duration={1.4}
+        />
+      </div>
+      <div className="mt-1.5 text-sm font-medium">{label}</div>
+      <p className="mt-1 text-xs opacity-70 leading-snug">{caption}</p>
+      <p className="mt-1 text-[10px] opacity-50 font-mono">sample data</p>
+    </div>
+  );
+}
 
-        onOpenCommand={() => {
-          const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
-          document.dispatchEvent(down);
-        }}
-        onScrollToConsole={scrollToConsole}
-      />
+// ─── Feature link cards ───────────────────────────────────────────────────────
+interface FeatureLinkProps {
+  href: string;
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}
 
-      {/* Global Cmd+K Command Palette */}
-      <CommandPalette
-        onSelectTab={(tab) => {
-          setActiveTab(tab);
-          scrollToConsole();
-        }}
-        onRunPreset={(presetKey) => {
-          setActiveTab('workspace');
-          scrollToConsole();
-          if (presetKey === 'architecture_sync') {
-            handleRunAgent(
-              'Prep my technical briefing for my 2 PM architecture sync on Project Titan, check FastAPI & Next.js CVEs.',
-              'project_titan',
-              presetKey
-            );
+function FeatureLink({ href, icon: Icon, title, description }: FeatureLinkProps) {
+  return (
+    <Link
+      href={href}
+      prefetch
+      className="group flex items-start gap-4 p-4 rounded-2xl border border-border bg-surface hover:bg-surface-2 hover:border-primary/30 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      <div className="p-2.5 rounded-xl bg-surface-2 border border-border group-hover:bg-primary/10 group-hover:border-primary/30 text-muted group-hover:text-primary transition-all shrink-0">
+        <Icon size={18} aria-hidden="true" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium text-sm text-text group-hover:text-primary transition-colors">
+            {title}
+          </span>
+          <ChevronRight
+            size={14}
+            className="text-muted group-hover:text-primary transition-all group-hover:translate-x-0.5 shrink-0"
+            aria-hidden="true"
+          />
+        </div>
+        <p className="text-xs text-muted mt-0.5 leading-relaxed">{description}</p>
+      </div>
+    </Link>
+  );
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+export default function DashboardPage() {
+  const router = useRouter();
+  const { isFallback, health, agentResult, securityState } = useAppState();
+
+  // Recent events from security state
+  const recentEvents = securityState?.events?.slice(0, 4) ?? [];
+
+  // Stats (single source of truth numbers)
+  const stats: StatCardProps[] = [
+    {
+      label: 'Lower AI cost',
+      value: 82.4,
+      prefix: '-',
+      suffix: '%',
+      decimals: 1,
+      caption: '$0.00142 vs $0.00806 baseline per briefing',
+      accent: 'primary',
+    },
+    {
+      label: 'Policy check time',
+      value: 15,
+      prefix: '<',
+      suffix: ' ms',
+      decimals: 0,
+      caption: 'Out-of-process sandbox intercept latency',
+      accent: 'info',
+    },
+    {
+      label: 'Searches scrubbed',
+      value: 100,
+      suffix: '%',
+      decimals: 0,
+      caption: 'Secrets removed before every Tavily search',
+      accent: 'highlight',
+    },
+    {
+      label: 'Attacks blocked',
+      value: 1,
+      suffix: '/1',
+      decimals: 0,
+      caption: 'Prompt injection attempt blocked in sandbox test',
+      accent: 'warning',
+    },
+  ];
+
+  const presets = [
+    {
+      key: 'architecture_sync',
+      label: 'Architecture sync',
+      description: 'Check Project Titan deps & CVEs',
+    },
+    {
+      key: 'pr_review',
+      label: 'PR security review',
+      description: 'Audit PyJWT 2.8.0 & Next.js patches',
+    },
+    {
+      key: 'competitive_scout',
+      label: 'Deep web scout',
+      description: 'Benchmark Nemotron inference costs',
+    },
+  ];
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-heading text-2xl sm:text-3xl font-semibold text-text">
+            Welcome back
+          </h1>
+          <p className="mt-1 text-muted text-sm">
+            Your private AI assistant is ready. All searches are scrubbed before they leave your
+            machine.
+          </p>
+        </div>
+        <Link
+          href="/app/briefing"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-fg font-medium text-sm hover:opacity-90 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0"
+        >
+          New briefing
+          <ArrowRight size={15} aria-hidden="true" />
+        </Link>
+      </div>
+
+      {/* ── Status chips ── */}
+      <div className="flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          Sandbox active
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-info/10 text-info border border-info/20">
+          <CheckCircle2 size={12} aria-hidden="true" />
+          Airlock armed
+        </span>
+        <span
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${
+            isFallback
+              ? 'bg-warning/10 text-warning border-warning/20'
+              : 'bg-primary/10 text-primary border-primary/20'
+          }`}
+          title={
+            isFallback
+              ? 'Running on local fallback data. Start the FastAPI backend to connect live.'
+              : `Connected to backend v${health?.version ?? '?'}`
           }
-        }}
-        onSimulateAttack={async () => {
-          await handleSimulateAttack();
-        }}
-        onTriggerScout={async () => {
-          setActiveTab('skills');
-          scrollToConsole();
-          await handleTriggerScout();
-        }}
-      />
+        >
+          {isFallback ? (
+            <>
+              <AlertTriangle size={12} aria-hidden="true" /> Demo mode
+            </>
+          ) : (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> Live
+            </>
+          )}
+        </span>
+      </div>
 
-      {/* Section 2: High-Impact Hero with Italic Accent & Trust Row */}
-      <Hero
-        onScrollToConsole={scrollToConsole}
-        onSimulateAttack={handleSimulateAttack}
-      />
+      {/* ── Stat cards ── */}
+      <section aria-labelledby="stats-heading">
+        <h2 id="stats-heading" className="sr-only">
+          Performance statistics
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {stats.map((s) => (
+            <StatCard key={s.label} {...s} />
+          ))}
+        </div>
+      </section>
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 py-6 space-y-16">
-        {/* Section 2: Key Proof Metrics */}
-        <MetricsRibbon />
+      {/* ── Feature link cards ── */}
+      <section aria-labelledby="features-heading">
+        <h2
+          id="features-heading"
+          className="text-sm font-medium text-muted uppercase tracking-wider mb-3"
+        >
+          Features
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <FeatureLink
+            href="/app/security"
+            icon={Lock}
+            title="Safe command sandbox"
+            description="Blocks risky commands and secret file access before they run"
+          />
+          <FeatureLink
+            href="/app/airlock"
+            icon={ShieldAlert}
+            title="Private web search"
+            description="Removes emails, keys and internal names from every search"
+          />
+          <FeatureLink
+            href="/app/costs"
+            icon={BarChart2}
+            title="Smart cost routing"
+            description="Routes tasks to the right model size — up to 82.4% cheaper"
+          />
+          <FeatureLink
+            href="/app/skills"
+            icon={Brain}
+            title="Learns your preferences"
+            description="Turns your corrections into reusable YAML skills"
+          />
+        </div>
+      </section>
 
-        {/* Section 3: Architecture Bento Grid */}
-        <ArchitectureShowcase
-          onSelectConsoleTab={(tabId) => {
-            setActiveTab(tabId);
-            scrollToConsole();
-          }}
-        />
-
-        {/* Section 4: Tavily Airlock Deep Dive */}
-        <AirlockSection
-          onOpenAirlock={() => {
-            setActiveTab('airlock');
-            scrollToConsole();
-          }}
-        />
-
-        {/* Section 5: The Live Interactive Console */}
-        <section id="console" ref={consoleRef} className="pt-8 pb-16 border-t border-white/[0.08]">
-          {/* Console Header Bar */}
-          <div className="p-5 rounded-t-2xl bg-surface-1 border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center space-x-2.5">
-                <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-surface-2 border border-white/[0.08] text-[11px] font-mono text-white/70">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isFallback ? 'bg-warning animate-pulse' : 'bg-nvidia animate-pulse'}`} />
-                  <span>{isFallback ? 'Offline Simulation' : 'Nemotron Live'}</span>
-                </span>
-                <span className="text-xs text-white/40 font-mono">Interactive Execution Runtime</span>
-              </div>
-              <h2 className="text-xl font-heading font-bold text-white tracking-tight flex items-center gap-2">
-                HermesShield live console <span className="font-editorial italic font-normal text-nvidia text-2xl tracking-normal">runtime</span>
-              </h2>
-            </div>
-
-            {/* Docked FinOps Telemetry HUD */}
-            <div className="shrink-0">
-              <FinOpsHUD telemetry={telemetry} health={health} />
-            </div>
+      {/* ── Bottom row: recent activity + preset strip ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Recent activity */}
+        <section
+          aria-labelledby="activity-heading"
+          className="lg:col-span-3 bg-surface rounded-2xl border border-border p-5"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2
+              id="activity-heading"
+              className="font-medium text-sm text-text flex items-center gap-2"
+            >
+              <Activity size={15} className="text-muted" aria-hidden="true" />
+              Recent activity
+            </h2>
+            <Link
+              href="/app/security"
+              className="text-xs text-muted hover:text-primary transition-colors"
+            >
+              View all →
+            </Link>
           </div>
-
-          {/* Unified Console Tab Switcher */}
-          <div className="bg-slate-950 border-x border-b border-slate-800 p-2">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-              {CONSOLE_TABS.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`relative p-3 rounded text-left transition-all border ${
-                      isActive
-                        ? 'bg-slate-900 border-slate-700 text-white shadow-sm'
-                        : 'bg-slate-950/40 border-slate-900 text-slate-400 hover:text-slate-200 hover:border-slate-800'
+          <div className="space-y-2">
+            {recentEvents.length === 0 ? (
+              <p className="text-xs text-muted py-4 text-center">
+                No events yet — run a briefing to see activity
+              </p>
+            ) : (
+              recentEvents.map((ev, i) => (
+                <div
+                  key={ev.id ?? i}
+                  className="flex items-start gap-3 px-3 py-2.5 rounded-xl bg-surface-2 border border-border"
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+                      ev.status === 'BLOCKED' ? 'bg-danger' : 'bg-primary'
+                    }`}
+                    aria-label={ev.status}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <code className="text-xs text-text/80 font-mono truncate block">
+                      {ev.command.slice(0, 50)}
+                      {ev.command.length > 50 ? '…' : ''}
+                    </code>
+                    <p className="text-[11px] text-muted mt-0.5">{ev.reason}</p>
+                  </div>
+                  <span
+                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded border shrink-0 ${
+                      ev.status === 'BLOCKED'
+                        ? 'text-danger border-danger/30 bg-danger/10'
+                        : 'text-primary border-primary/30 bg-primary/10'
                     }`}
                   >
-                    <div className="flex items-center space-x-2 font-mono text-xs font-bold">
-                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
-                      <span className="tracking-wider">{tab.label}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono mt-1 pl-5">
-                      {tab.sub}
-                    </div>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-console-tab"
-                        className="absolute inset-0 border border-emerald-500/40 rounded pointer-events-none"
-                        transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Active Tab Panel Container */}
-          <div className="p-6 bg-slate-950/70 border-x border-b border-slate-800 rounded-b-xl min-h-[500px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-              >
-                {activeTab === 'workspace' && (
-                  <WorkspacePanel
-                    onRun={handleRunAgent}
-                    loading={loadingRun}
-                    result={agentResult}
-                  />
-                )}
-
-                {activeTab === 'airlock' && (
-                  <TavilyAirlock airlock={agentResult?.airlock ?? null} />
-                )}
-
-                {activeTab === 'security' && (
-                  <NemoClawHUD
-                    policyYaml={securityState?.policy_yaml ?? ''}
-                    events={securityState?.events ?? []}
-                    onSimulateAttack={handleSimulateAttack}
-                  />
-                )}
-
-                {activeTab === 'skills' && (
-                  <SkillStudio
-                    memoryMarkdown={memoryState?.memory_markdown ?? ''}
-                    skills={memoryState?.skills ?? []}
-                    onSaveMemory={handleSaveMemory}
-                    onCompileSkill={handleCompileSkill}
-                    onTriggerScout={handleTriggerScout}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
+                    {ev.status}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </section>
-      </main>
 
-      {/* Agency-Grade Global Perimeter Footer */}
-      <footer className="border-t border-slate-900 py-8 px-4 text-xs font-mono text-slate-500 bg-slate-950">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-white uppercase">HERMESSHIELD°</span>
-            <span>—</span>
-            <span className="text-slate-400">Zero-Trust Sovereign Personal AI & Deep Web Scout</span>
+        {/* Try a preset strip */}
+        <section
+          aria-labelledby="presets-heading"
+          className="lg:col-span-2 bg-surface rounded-2xl border border-border p-5 flex flex-col"
+        >
+          <h2
+            id="presets-heading"
+            className="font-medium text-sm text-text flex items-center gap-2 mb-4"
+          >
+            <Zap size={15} className="text-primary" aria-hidden="true" />
+            Try a preset
+          </h2>
+          <div className="space-y-2 flex-1">
+            {presets.map((p) => (
+              <Link
+                key={p.key}
+                href={`/app/briefing?preset=${p.key}`}
+                className="group flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-border bg-surface-2 hover:bg-primary/10 hover:border-primary/30 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <div className="min-w-0">
+                  <div className="text-xs font-medium text-text group-hover:text-primary transition-colors truncate">
+                    {p.label}
+                  </div>
+                  <div className="text-[11px] text-muted truncate">{p.description}</div>
+                </div>
+                <ChevronRight
+                  size={14}
+                  className="text-muted group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0"
+                  aria-hidden="true"
+                />
+              </Link>
+            ))}
           </div>
-
-          <div className="flex items-center space-x-4 text-slate-500">
-            <span>[ NVIDIA NEMOCLAW ]</span>
-            <span>[ NEBIUS TOKEN FACTORY ]</span>
-            <span>[ TAVILY AIRLOCK ]</span>
-            <span className="text-emerald-400 font-bold">[ DEVPOST 2026 ]</span>
+          <div className="mt-4 pt-4 border-t border-border">
+            <Link
+              href="/app/briefing"
+              className="flex items-center gap-2 text-xs text-muted hover:text-primary transition-colors"
+            >
+              <TrendingDown size={13} aria-hidden="true" />
+              View cost savings →
+            </Link>
           </div>
-        </div>
-      </footer>
+        </section>
+      </div>
     </div>
   );
 }
