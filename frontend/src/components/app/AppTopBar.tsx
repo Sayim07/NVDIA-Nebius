@@ -2,24 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-  Menu,
-  Search,
-  Github,
-  Shield,
-  ChevronRight,
-  LayoutDashboard,
-  FileText,
-  ShieldAlert,
-  Lock,
-  Brain,
-  BarChart2,
-  HelpCircle,
-  SidebarClose,
-} from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, Search, Github, Shield, ChevronRight } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { CircularCommandMenu, CommandItem } from '@/components/ui/circular-command-menu';
 import { APP_ROUTES } from './AppSidebar';
 import { useAppState } from './AppStateProvider';
 import { content } from '@/content/content';
@@ -30,7 +15,6 @@ interface AppTopBarProps {
 
 export function AppTopBar({ onMenuToggle }: AppTopBarProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const { isFallback, health } = useAppState();
 
   // Find current route label for breadcrumb
@@ -41,70 +25,18 @@ export function AppTopBar({ onMenuToggle }: AppTopBarProps) {
 
   const pageTitle = currentRoute?.label ?? 'Dashboard';
 
-  const circularItems: CommandItem[] = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      shortcut: 'D',
-      icon: <LayoutDashboard size={16} className="text-primary" />,
-      onClick: () => router.push('/app'),
-    },
-    {
-      id: 'briefing',
-      label: 'Briefing',
-      shortcut: 'B',
-      icon: <FileText size={16} className="text-emerald-400" />,
-      onClick: () => router.push('/app/briefing'),
-    },
-    {
-      id: 'airlock',
-      label: 'Privacy Airlock',
-      shortcut: 'A',
-      icon: <ShieldAlert size={16} className="text-cyan-400" />,
-      onClick: () => router.push('/app/airlock'),
-    },
-    {
-      id: 'security',
-      label: 'Security & Sandbox',
-      shortcut: 'S',
-      icon: <Lock size={16} className="text-rose-400" />,
-      onClick: () => router.push('/app/security'),
-    },
-    {
-      id: 'skills',
-      label: 'Skills & Memory',
-      shortcut: 'M',
-      icon: <Brain size={16} className="text-violet-400" />,
-      onClick: () => router.push('/app/skills'),
-    },
-    {
-      id: 'costs',
-      label: 'Cost & Speed',
-      shortcut: 'C',
-      icon: <BarChart2 size={16} className="text-amber-400" />,
-      onClick: () => router.push('/app/costs'),
-    },
-    {
-      id: 'sidebar',
-      label: 'Toggle Sidebar',
-      shortcut: 'T',
-      icon: <SidebarClose size={16} className="text-text" />,
-      onClick: onMenuToggle,
-    },
-  ];
-
   return (
     <header className="sticky top-0 z-30 w-full h-14 flex items-center gap-3 px-4 bg-bg/90 backdrop-blur-md border-b border-border">
-      {/* Circular Command Menu replacing the old hamburger button */}
-      <div id="app-topbar-menu" className="relative z-50 shrink-0">
-        <CircularCommandMenu
-          items={circularItems}
-          radius={140}
-          startAngle={-5}
-          totalAngle={95}
-          trigger={<Menu size={16} aria-hidden="true" />}
-        />
-      </div>
+      {/* Hamburger menu button to toggle sidebar/drawer */}
+      <button
+        onClick={onMenuToggle}
+        className="w-9 h-9 flex items-center justify-center rounded-xl border border-border bg-surface hover:bg-surface-2 text-muted hover:text-text transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary shrink-0 cursor-pointer"
+        aria-label="Toggle navigation menu"
+        aria-controls="app-sidebar"
+        title="Toggle sidebar (or drawer on mobile)"
+      >
+        <Menu size={16} aria-hidden="true" />
+      </button>
 
       {/* Logo + Breadcrumb */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
