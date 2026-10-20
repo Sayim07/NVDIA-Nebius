@@ -197,7 +197,7 @@ export const content: ContentConfig = {
   links: {
     github: 'https://github.com/Sayim07/NVDIA-Nebius',
     liveDemo: '#demo',
-    youtube: 'https://www.youtube.com/watch?v=placeholder', // TODO: Swap with 3-minute video
+    youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     devpost: 'https://devpost.com',
   },
 

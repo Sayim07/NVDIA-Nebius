@@ -1,326 +1,338 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import gsap from 'gsap';
 import {
-  Terminal,
-  ShieldAlert,
-  Cpu,
-  Brain,
-  Layers,
-  Sparkles,
-  ExternalLink,
-  ChevronRight,
+  Shield,
+  ArrowRight,
+  Play,
+  Github,
+  CornerDownLeft,
 } from 'lucide-react';
-import {
-  HealthStatus,
-  FinOpsTelemetry,
-  AgentRunResponse,
-  SecurityStateResponse,
-  MemoryStateResponse,
-} from '@/lib/types';
-import {
-  fetchHealth,
-  runAgent,
-  fetchSecurityState,
-  simulateAttack,
-  fetchMemoryState,
-  updateMemory,
-  compileSkill,
-  triggerOvernightScout,
-} from '@/lib/api';
-import { Navbar } from '@/components/sections/Navbar';
-import { Hero } from '@/components/sections/Hero';
-import { MetricsRibbon } from '@/components/MetricsRibbon';
-import { ArchitectureShowcase } from '@/components/ArchitectureShowcase';
-import { AirlockSection } from '@/components/AirlockSection';
-import { FinOpsHUD } from '@/components/FinOpsHUD';
-import { WorkspacePanel } from '@/components/WorkspacePanel';
-import { TavilyAirlock } from '@/components/TavilyAirlock';
-import { NemoClawHUD } from '@/components/NemoClawHUD';
-import { SkillStudio } from '@/components/SkillStudio';
-import { CommandPalette } from '@/components/ui/CommandPalette';
+import { content } from '@/content/content';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import LandingHero3D from '@/components/landing/LandingHero3D';
+import { VideoModal } from '@/components/ui/VideoModal';
 
-const CONSOLE_TABS = [
-  { id: 'workspace', label: '01 // WORKSPACE RUNNER', sub: 'Executive Briefings & Presets', icon: Terminal },
-  { id: 'airlock', label: '02 // TAVILY AIRLOCK', sub: 'Zero-PII Search Diff', icon: ShieldAlert },
-  { id: 'security', label: '03 // NEMOCLAW GUARD', sub: 'Out-of-Process Ledger', icon: Cpu },
-  { id: 'skills', label: '04 // HERMES SKILLS', sub: 'Episodic Memory & YAML', icon: Brain },
-];
+export default function LandingPage() {
+  const router = useRouter();
+  const [isReturningUser, setIsReturningUser] = useState(false);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('workspace');
-  const [health, setHealth] = useState<HealthStatus | null>(null);
-  const [telemetry, setTelemetry] = useState<FinOpsTelemetry | null>(null);
-  const [agentResult, setAgentResult] = useState<AgentRunResponse | null>(null);
-  const [loadingRun, setLoadingRun] = useState(false);
-  const [securityState, setSecurityState] = useState<SecurityStateResponse | null>(null);
-  const [memoryState, setMemoryState] = useState<MemoryStateResponse | null>(null);
-  const consoleRef = useRef<HTMLDivElement>(null);
+  // Animation container refs
+  const containerRef = useRef<HTMLDivElement>(null);
+  const topBarRef = useRef<HTMLElement>(null);
+  const pillRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtextRef = useRef<HTMLParagraphElement>(null);
+  const ctaGroupRef = useRef<HTMLDivElement>(null);
+  const trustLineRef = useRef<HTMLDivElement>(null);
+  const bottomHintRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const wipeRef = useRef<HTMLDivElement>(null);
 
-  const isFallback = health?.is_fallback ?? true;
-
-  // Initial handshake and state loading
+  // Check if returning user and prefetch /app
   useEffect(() => {
-    async function init() {
-      try {
-        const h = await fetchHealth();
-        setHealth(h);
-      } catch (e) {
-        console.warn('Backend offline or health unreachable:', e);
+    router.prefetch('/app');
+    try {
+      const visited = localStorage.getItem('hs-visited');
+      if (visited === 'true') {
+        setIsReturningUser(true);
       }
-
-      try {
-        const sec = await fetchSecurityState();
-        setSecurityState(sec);
-      } catch (e) {
-        console.warn('Security state unreachable:', e);
-      }
-
-      try {
-        const mem = await fetchMemoryState();
-        setMemoryState(mem);
-      } catch (e) {
-        console.warn('Memory state unreachable:', e);
-      }
+    } catch {
+      // Ignore storage access errors
     }
-    init();
+  }, [router]);
+
+  // Entrance animation with GSAP (< 1.2s total)
+  useEffect(() => {
+    // If user prefers reduced motion, skip GSAP animation
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    if (prefersReducedMotion) {
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Initial state
+      gsap.set(
+        [
+          topBarRef.current,
+          pillRef.current,
+          titleRef.current,
+          subtextRef.current,
+          ctaGroupRef.current,
+          trustLineRef.current,
+          bottomHintRef.current,
+        ],
+        { opacity: 0, y: 16 }
+      );
+
+      gsap.set(sceneRef.current, { opacity: 0, scale: 0.94 });
+
+      // Staggered reveal
+      tl.to(topBarRef.current, { opacity: 1, y: 0, duration: 0.4 })
+        .to(sceneRef.current, { opacity: 1, scale: 1, duration: 0.8 }, '-=0.2')
+        .to(pillRef.current, { opacity: 1, y: 0, duration: 0.35 }, '-=0.6')
+        .to(titleRef.current, { opacity: 1, y: 0, duration: 0.4 }, '-=0.45')
+        .to(subtextRef.current, { opacity: 1, y: 0, duration: 0.35 }, '-=0.35')
+        .to(ctaGroupRef.current, { opacity: 1, y: 0, duration: 0.35 }, '-=0.25')
+        .to(trustLineRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2')
+        .to(bottomHintRef.current, { opacity: 1, y: 0, duration: 0.3 }, '-=0.2');
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
-  const scrollToConsole = () => {
-    const el = document.getElementById('console');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // "Get Started" page transition
+  const handleGetStarted = useCallback(() => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
 
-  const handleRunAgent = async (instruction: string, workspaceId: string, presetName?: string) => {
-    setLoadingRun(true);
     try {
-      const res = await runAgent({ instruction, workspace_id: workspaceId, preset_name: presetName });
-      setAgentResult(res);
-      setTelemetry(res.finops);
-      // Refresh security audit log
-      const sec = await fetchSecurityState();
-      setSecurityState(sec);
-    } catch (e) {
-      console.error('Agent execution error:', e);
-    } finally {
-      setLoadingRun(false);
+      localStorage.setItem('hs-visited', 'true');
+    } catch {
+      // Storage access error
     }
-  };
 
-  const handleSimulateAttack = async () => {
-    setActiveTab('security');
-    scrollToConsole();
-    const res = await simulateAttack();
-    const sec = await fetchSecurityState();
-    setSecurityState(sec);
-    return res;
-  };
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
 
-  const handleSaveMemory = async (newMarkdown: string) => {
-    await updateMemory(newMarkdown);
-    const mem = await fetchMemoryState();
-    setMemoryState(mem);
-  };
+    if (prefersReducedMotion) {
+      router.push('/app');
+      return;
+    }
 
-  const handleCompileSkill = async (feedbackText: string) => {
-    await compileSkill({ user_feedback: feedbackText });
-    const mem = await fetchMemoryState();
-    setMemoryState(mem);
-  };
+    // Elegant zoom into shield + wipe overlay (0.55s)
+    const tl = gsap.timeline({
+      onComplete: () => {
+        router.push('/app');
+      },
+    });
 
-  const handleTriggerScout = async () => {
-    return await triggerOvernightScout();
-  };
+    if (wipeRef.current) {
+      tl.to(wipeRef.current, {
+        opacity: 1,
+        duration: 0.55,
+        ease: 'power2.inOut',
+      });
+    } else {
+      setTimeout(() => router.push('/app'), 550);
+    }
+  }, [isTransitioning, router]);
+
+  // Keyboard shortcut listener: Enter key triggers "Get started"
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // If video modal is open, don't trigger transition
+      if (isVideoOpen) return;
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleGetStarted();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleGetStarted, isVideoOpen]);
+
+  // Subtle scroll gesture to navigate to /app
+  useEffect(() => {
+    let accumulatedDelta = 0;
+    const handleWheel = (e: WheelEvent) => {
+      if (isVideoOpen || isTransitioning) return;
+      if (e.deltaY > 0) {
+        accumulatedDelta += e.deltaY;
+        if (accumulatedDelta > 150) {
+          handleGetStarted();
+        }
+      } else {
+        accumulatedDelta = 0;
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [handleGetStarted, isVideoOpen, isTransitioning]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-ink font-sans selection:bg-primary/10 selection:text-primary">
-      {/* Section 1: Modern Responsive Navbar */}
-      <Navbar
-
-        onOpenCommand={() => {
-          const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
-          document.dispatchEvent(down);
-        }}
-        onScrollToConsole={scrollToConsole}
+    <div
+      ref={containerRef}
+      className="h-[100dvh] w-full overflow-hidden bg-bg text-text flex flex-col justify-between relative select-none"
+    >
+      {/* Background dot grid pattern */}
+      <div
+        className="absolute inset-0 bg-grid-pattern opacity-60 pointer-events-none"
+        aria-hidden="true"
       />
 
-      {/* Global Cmd+K Command Palette */}
-      <CommandPalette
-        onSelectTab={(tab) => {
-          setActiveTab(tab);
-          scrollToConsole();
-        }}
-        onRunPreset={(presetKey) => {
-          setActiveTab('workspace');
-          scrollToConsole();
-          if (presetKey === 'architecture_sync') {
-            handleRunAgent(
-              'Prep my technical briefing for my 2 PM architecture sync on Project Titan, check FastAPI & Next.js CVEs.',
-              'project_titan',
-              presetKey
-            );
-          }
-        }}
-        onSimulateAttack={async () => {
-          await handleSimulateAttack();
-        }}
-        onTriggerScout={async () => {
-          setActiveTab('skills');
-          scrollToConsole();
-          await handleTriggerScout();
-        }}
+      {/* Radial forest wash */}
+      <div
+        className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-[radial-gradient(circle,rgba(52,211,153,0.06),transparent_70%)] pointer-events-none dark:bg-[radial-gradient(circle,rgba(52,211,153,0.08),transparent_70%)]"
+        aria-hidden="true"
       />
 
-      {/* Section 2: High-Impact Hero with Italic Accent & Trust Row */}
-      <Hero
-        onScrollToConsole={scrollToConsole}
-        onSimulateAttack={handleSimulateAttack}
+      {/* Transition Wipe Overlay */}
+      <div
+        ref={wipeRef}
+        className="absolute inset-0 z-50 bg-bg pointer-events-none opacity-0"
+        aria-hidden="true"
       />
 
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 py-6 space-y-16">
-        {/* Section 2: Key Proof Metrics */}
-        <MetricsRibbon />
+      {/* TOP BAR (Minimal) */}
+      <header
+        ref={topBarRef}
+        className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-8 py-5 flex items-center justify-between"
+      >
+        {/* Brand Logo: Shield mark + HermesShield */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/25 flex items-center justify-center text-primary shadow-sm">
+            <Shield className="w-4 h-4 fill-primary/20 text-primary" />
+          </div>
+          <span className="font-heading font-semibold text-base sm:text-lg tracking-tight text-text">
+            {content.meta.name}
+          </span>
+        </div>
 
-        {/* Section 3: Architecture Bento Grid */}
-        <ArchitectureShowcase
-          onSelectConsoleTab={(tabId) => {
-            setActiveTab(tabId);
-            scrollToConsole();
-          }}
-        />
+        {/* Right Nav: GitHub + ThemeToggle + Skip to app */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <a
+            href={content.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg text-muted hover:text-text hover:bg-surface-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30"
+            aria-label="GitHub Repository"
+          >
+            <Github className="w-4 h-4" />
+          </a>
 
-        {/* Section 4: Tavily Airlock Deep Dive */}
-        <AirlockSection
-          onOpenAirlock={() => {
-            setActiveTab('airlock');
-            scrollToConsole();
-          }}
-        />
+          <ThemeToggle />
 
-        {/* Section 5: The Live Interactive Console */}
-        <section id="console" ref={consoleRef} className="pt-8 pb-16 border-t border-white/[0.08]">
-          {/* Console Header Bar */}
-          <div className="p-5 rounded-t-2xl bg-surface-1 border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center space-x-2.5">
-                <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-surface-2 border border-white/[0.08] text-[11px] font-mono text-white/70">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isFallback ? 'bg-warning animate-pulse' : 'bg-nvidia animate-pulse'}`} />
-                  <span>{isFallback ? 'Offline Simulation' : 'Nemotron Live'}</span>
-                </span>
-                <span className="text-xs text-white/40 font-mono">Interactive Execution Runtime</span>
-              </div>
-              <h2 className="text-xl font-heading font-bold text-white tracking-tight flex items-center gap-2">
-                HermesShield live console <span className="font-editorial italic font-normal text-nvidia text-2xl tracking-normal">runtime</span>
-              </h2>
-            </div>
+          <button
+            id="skip-to-app-btn"
+            onClick={handleGetStarted}
+            className="text-xs sm:text-sm font-medium text-muted hover:text-primary transition-colors focus:outline-none focus:underline pl-1 cursor-pointer"
+          >
+            Skip to app →
+          </button>
+        </div>
+      </header>
 
-            {/* Docked FinOps Telemetry HUD */}
-            <div className="shrink-0">
-              <FinOpsHUD telemetry={telemetry} health={health} />
-            </div>
+      {/* MAIN VIEWPORT: Left text block + Right 3D hero */}
+      <main className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-2 min-h-0">
+        {/* Left Column: Text & CTAs (col-span-7) */}
+        <div className="lg:col-span-7 flex flex-col justify-center max-w-2xl">
+          {/* Pill badge */}
+          <div ref={pillRef} className="mb-5 inline-block">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-surface border border-border text-muted shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-highlight animate-pulse" />
+              {content.hero.eyebrow}
+            </span>
           </div>
 
-          {/* Unified Console Tab Switcher */}
-          <div className="bg-slate-950 border-x border-b border-slate-800 p-2">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-              {CONSOLE_TABS.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`relative p-3 rounded text-left transition-all border ${
-                      isActive
-                        ? 'bg-slate-900 border-slate-700 text-white shadow-sm'
-                        : 'bg-slate-950/40 border-slate-900 text-slate-400 hover:text-slate-200 hover:border-slate-800'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-2 font-mono text-xs font-bold">
-                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
-                      <span className="tracking-wider">{tab.label}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono mt-1 pl-5">
-                      {tab.sub}
-                    </div>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-console-tab"
-                        className="absolute inset-0 border border-emerald-500/40 rounded pointer-events-none"
-                        transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          {/* H1 Heading */}
+          <h1
+            ref={titleRef}
+            className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-semibold tracking-tight text-text leading-[1.12] mb-5"
+          >
+            A personal AI that keeps your secrets{' '}
+            <span className="text-primary">secret.</span>
+          </h1>
+
+          {/* Subtext (max 2 lines) */}
+          <p
+            ref={subtextRef}
+            className="text-base sm:text-lg text-muted leading-relaxed mb-7 max-w-xl"
+          >
+            {content.hero.subtext}
+          </p>
+
+          {/* CTAs */}
+          <div
+            ref={ctaGroupRef}
+            className="flex flex-wrap items-center gap-3.5 mb-8"
+          >
+            {/* Primary CTA */}
+            <button
+              id="get-started-btn"
+              onClick={handleGetStarted}
+              disabled={isTransitioning}
+              className="group relative inline-flex items-center gap-2.5 px-6 py-3 rounded-xl font-medium text-sm text-primary-fg bg-primary hover:opacity-95 shadow-sm hover:shadow-md transition-all active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+            >
+              <span>
+                {isReturningUser ? 'Continue to dashboard' : 'Get started'}
+              </span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+
+            {/* Secondary CTA: Video modal */}
+            <button
+              id="watch-demo-btn"
+              onClick={() => setIsVideoOpen(true)}
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-medium text-sm text-text bg-surface hover:bg-surface-2 border border-border shadow-sm hover:border-primary/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 fill-current text-primary" />
+              <span>Watch 3-min demo</span>
+            </button>
           </div>
 
-          {/* Active Tab Panel Container */}
-          <div className="p-6 bg-slate-950/70 border-x border-b border-slate-800 rounded-b-xl min-h-[500px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-              >
-                {activeTab === 'workspace' && (
-                  <WorkspacePanel
-                    onRun={handleRunAgent}
-                    loading={loadingRun}
-                    result={agentResult}
-                  />
-                )}
-
-                {activeTab === 'airlock' && (
-                  <TavilyAirlock airlock={agentResult?.airlock ?? null} />
-                )}
-
-                {activeTab === 'security' && (
-                  <NemoClawHUD
-                    policyYaml={securityState?.policy_yaml ?? ''}
-                    events={securityState?.events ?? []}
-                    onSimulateAttack={handleSimulateAttack}
-                  />
-                )}
-
-                {activeTab === 'skills' && (
-                  <SkillStudio
-                    memoryMarkdown={memoryState?.memory_markdown ?? ''}
-                    skills={memoryState?.skills ?? []}
-                    onSaveMemory={handleSaveMemory}
-                    onCompileSkill={handleCompileSkill}
-                    onTriggerScout={handleTriggerScout}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </section>
-      </main>
-
-      {/* Agency-Grade Global Perimeter Footer */}
-      <footer className="border-t border-slate-900 py-8 px-4 text-xs font-mono text-slate-500 bg-slate-950">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-white uppercase">HERMESSHIELD°</span>
-            <span>—</span>
-            <span className="text-slate-400">Zero-Trust Sovereign Personal AI & Deep Web Scout</span>
-          </div>
-
-          <div className="flex items-center space-x-4 text-slate-500">
-            <span>[ NVIDIA NEMOCLAW ]</span>
-            <span>[ NEBIUS TOKEN FACTORY ]</span>
-            <span>[ TAVILY AIRLOCK ]</span>
-            <span className="text-emerald-400 font-bold">[ DEVPOST 2026 ]</span>
+          {/* Tiny Trust Line */}
+          <div
+            ref={trustLineRef}
+            className="flex items-center gap-2 text-xs text-muted/80 tracking-normal"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+            <span>
+              Built with NVIDIA NemoClaw · Nebius Token Factory · NVIDIA Nemotron · Tavily
+            </span>
           </div>
         </div>
+
+        {/* Right Column: The 3D Scene (col-span-5) */}
+        <div
+          ref={sceneRef}
+          className="lg:col-span-5 h-[320px] sm:h-[420px] lg:h-[480px] w-full flex items-center justify-center relative"
+        >
+          <LandingHero3D isZooming={isTransitioning} />
+        </div>
+      </main>
+
+      {/* BOTTOM HINT (Press Enter to begin) */}
+      <footer
+        ref={bottomHintRef}
+        className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-8 py-4 flex items-center justify-between text-xs text-muted/70"
+      >
+        <div className="flex items-center gap-2">
+          <span>Scroll or press</span>
+          <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-border bg-surface text-text font-mono text-[11px] shadow-2xs">
+            Enter <CornerDownLeft className="w-3 h-3 text-muted" />
+          </kbd>
+          <span>to begin</span>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-4 text-[11px]">
+          <span>MIT Licensed</span>
+          <span>·</span>
+          <span>v1.0.0</span>
+        </div>
       </footer>
+
+      {/* Video Walkthrough Modal */}
+      <VideoModal
+        isOpen={isVideoOpen}
+        onClose={() => setIsVideoOpen(false)}
+        videoUrl={content.links.youtube}
+        title="HermesShield — 3-Minute Demo"
+      />
     </div>
   );
 }

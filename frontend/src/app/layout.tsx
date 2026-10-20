@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 import { ScrollProgressBar } from '@/components/ui/ScrollProgressBar';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://nvdia-nebius.vercel.app'),
@@ -55,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -64,9 +65,11 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-bg text-ink min-h-screen selection:bg-primary/10 selection:text-primary">
-        <ScrollProgressBar />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+      <body className="bg-bg text-text min-h-screen selection:bg-primary/20 selection:text-primary transition-colors duration-200">
+        <ThemeProvider>
+          <ScrollProgressBar />
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

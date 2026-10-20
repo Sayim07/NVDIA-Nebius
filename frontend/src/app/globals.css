@@ -2,35 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #F7F7F4;
-  --foreground: #0F1A17;
+:root,
+.dark {
+  /* DARK (Default, "Forest Night", never pure black) */
+  --bg: #0A1411;
+  --surface: #101C18;
+  --surface-2: #16251F;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #E9F1ED;
+  --muted: #93A7A0;
+  --primary: #34D399;
+  --primary-fg: #052018;
+  --highlight: #76B900;
+  --info: #38BDF8;
+  --danger: #F87171;
+  --warning: #FBBF24;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.45);
+  --dot-grid: rgba(255, 255, 255, 0.05);
+}
+
+.light {
+  /* LIGHT ("Paper & Forest") */
+  --bg: #F7F7F4;
   --surface: #FFFFFF;
   --surface-2: #EEF1EC;
-  --ink: #0F1A17;
-  --muted: #56625E;
   --border: #E3E6E0;
+  --text: #0F1A17;
+  --muted: #56625E;
   --primary: #0B6E4F;
-  --primary-hover: #095A41;
+  --primary-fg: #FFFFFF;
   --highlight: #76B900;
   --info: #2563EB;
   --danger: #D92D20;
   --warning: #B54708;
-  --dark: #0E1F1A;
+  --card-shadow: 0 1px 3px rgba(15, 26, 23, 0.05), 0 8px 24px rgba(15, 26, 23, 0.06);
+  --dot-grid: rgba(15, 26, 23, 0.07);
 }
 
 body {
-  background-color: #F7F7F4;
-  color: #0F1A17;
+  background-color: var(--bg);
+  color: var(--text);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
-/* Subtle light dotted grid overlay */
-.bg-grid-pattern-light {
-  background-image: radial-gradient(rgba(15, 26, 23, 0.06) 1px, transparent 1px);
+/* Dynamic dot grid pattern reading current theme */
+.bg-grid-pattern {
+  background-image: radial-gradient(var(--dot-grid) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -39,7 +60,7 @@ h1, h2, h3, h4, .font-heading {
   font-family: 'Inter Tight', 'Geist', -apple-system, sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #0F1A17;
+  color: var(--text);
 }
 
 /* Editorial Serif Accent Word (Hero only) */
@@ -56,29 +77,30 @@ h1, h2, h3, h4, .font-heading {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F7F4;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D5DAD2;
+  background: var(--border);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8C0B4;
+  background: var(--muted);
 }
 
 /* Command Palette Overlay & Window */
 [cmdk-overlay] {
-  background-color: rgba(15, 26, 23, 0.4);
+  background-color: rgba(10, 20, 17, 0.65);
   backdrop-filter: blur(8px);
 }
 
 [cmdk-root] {
-  background: #FFFFFF;
-  border: 1px solid #E3E6E0;
-  box-shadow: 0 16px 48px -8px rgba(15, 26, 23, 0.16), 0 4px 16px rgba(15, 26, 23, 0.06);
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--card-shadow);
+  border-radius: 14px;
+  color: var(--text);
   animation: fadeIn 0.15s ease-out;
 }
 
@@ -92,5 +114,3 @@ h1, h2, h3, h4, .font-heading {
     transform: scale(1);
   }
 }
-
-
