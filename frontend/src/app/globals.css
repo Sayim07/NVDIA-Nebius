@@ -3,34 +3,50 @@
 @tailwind utilities;
 
 :root {
-  --background: #07090D;
-  --foreground: #F8FAFC;
+  --background: #F7F7F4;
+  --foreground: #0F1A17;
+  --surface: #FFFFFF;
+  --surface-2: #EEF1EC;
+  --ink: #0F1A17;
+  --muted: #56625E;
+  --border: #E3E6E0;
+  --primary: #0B6E4F;
+  --primary-hover: #095A41;
+  --highlight: #76B900;
+  --info: #2563EB;
+  --danger: #D92D20;
+  --warning: #B54708;
+  --dark: #0E1F1A;
 }
 
-
 body {
-  background-color: #07090D;
-  color: #F8FAFC;
+  background-color: #F7F7F4;
+  color: #0F1A17;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
 }
 
-/* Very subtle background dot grid overlay */
-.bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
+/* Subtle light dotted grid overlay */
+.bg-grid-pattern-light {
+  background-image: radial-gradient(rgba(15, 26, 23, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-/* Headings in Space Grotesk */
+/* Headings in Inter Tight / Geist */
 h1, h2, h3, h4, .font-heading {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Inter Tight', 'Geist', -apple-system, sans-serif;
+  font-weight: 600;
   letter-spacing: -0.02em;
+  color: #0F1A17;
 }
 
-/* Editorial Serif Accent Word */
+/* Editorial Serif Accent Word (Hero only) */
 .font-editorial {
   font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 /* Custom Scrollbar */
@@ -40,20 +56,29 @@ h1, h2, h3, h4, .font-heading {
 }
 
 ::-webkit-scrollbar-track {
-  background: #07090D;
+  background: #F7F7F4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1C2533;
+  background: #D5DAD2;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2E3B50;
+  background: #B8C0B4;
 }
 
-/* Command Palette Animation */
+/* Command Palette Overlay & Window */
+[cmdk-overlay] {
+  background-color: rgba(15, 26, 23, 0.4);
+  backdrop-filter: blur(8px);
+}
+
 [cmdk-root] {
+  background: #FFFFFF;
+  border: 1px solid #E3E6E0;
+  box-shadow: 0 16px 48px -8px rgba(15, 26, 23, 0.16), 0 4px 16px rgba(15, 26, 23, 0.06);
+  border-radius: 16px;
   animation: fadeIn 0.15s ease-out;
 }
 
@@ -67,4 +92,5 @@ h1, h2, h3, h4, .font-heading {
     transform: scale(1);
   }
 }
+
 

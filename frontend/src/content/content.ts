@@ -1,7 +1,7 @@
 /**
  * HermesShield Content Store
  * Single source of truth for all copy, links, metrics, presets, and roadmap items.
- * Non-technical teammates can edit this file directly to update the site.
+ * Written in calm, professional plain English in the spirit of Stripe, Linear, and Vercel.
  */
 
 export interface NavItem {
@@ -11,32 +11,32 @@ export interface NavItem {
 
 export interface MetricItem {
   value: string;
-  numericValue: number;
+  numericValue?: number;
   prefix?: string;
   suffix?: string;
   decimals?: number;
+  isTextValue?: boolean;
   label: string;
   caption: string;
 }
 
-export interface SafetyLayerItem {
+export interface FeatureItem {
   id: string;
   title: string;
-  tagline: string;
   description: string;
-  tabId: 'workspace' | 'airlock' | 'security' | 'skills';
-  accent: 'green' | 'cyan' | 'amber';
-  badge: string;
+  techTag: string;
+  tabId: 'briefing' | 'airlock' | 'sandbox' | 'skills';
+  actionLabel: string;
 }
 
-export interface AirlockStepItem {
+export interface HowItWorksStep {
   step: number;
   title: string;
-  description: string;
+  shortDesc: string;
   detail: string;
 }
 
-export interface StackMarqueeItem {
+export interface StackItem {
   name: string;
   category: string;
   why: string;
@@ -49,11 +49,17 @@ export interface QuickstartStep {
   description: string;
 }
 
+export interface RoadmapItem {
+  title: string;
+  description: string;
+  status: string;
+}
+
 export interface ContentConfig {
   meta: {
     name: string;
     tagline: string;
-    pitch: string;
+    description: string;
     track: string;
     hackathon: string;
     license: string;
@@ -66,6 +72,7 @@ export interface ContentConfig {
     devpost: string;
   };
   nav: {
+    logoText: string;
     links: NavItem[];
     cta: string;
     searchLabel: string;
@@ -78,475 +85,483 @@ export interface ContentConfig {
     subtext: string;
     primaryCta: string;
     secondaryCta: string;
-    trustRowLabel: string;
-    trustLogos: { name: string; tag: string }[];
+    trustLabel: string;
+    trustLogos: { name: string; category: string }[];
   };
   problemSolution: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
     problem: {
       badge: string;
       title: string;
       description: string;
-      bulletPoints: string[];
+      points: string[];
     };
-    solution: {
+    fix: {
       badge: string;
       title: string;
       description: string;
-      bulletPoints: string[];
+      points: string[];
     };
   };
-  metrics: MetricItem[];
-  layers: {
+  results: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    description: string;
-    items: SafetyLayerItem[];
+    heading: string;
+    footnote: string;
+    items: MetricItem[];
   };
-  airlock: {
+  features: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    description: string;
-    steps: AirlockStepItem[];
-    diffSample: {
+    heading: string;
+    subheading: string;
+    items: FeatureItem[];
+  };
+  howItWorks: {
+    eyebrow: string;
+    tavilyBadge: string;
+    heading: string;
+    subheading: string;
+    steps: HowItWorksStep[];
+    diffCard: {
       rawPrompt: string;
-      redactedTokens: string[];
-      sanitizedQuery: string;
+      rawPromptRedactions: string[];
+      cleanedQuery: string;
+      cta: string;
     };
-    cta: string;
   };
   architecture: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    description: string;
+    heading: string;
+    subheading: string;
   };
-  console: {
+  liveDemo: {
     eyebrow: string;
-    title: string;
+    heading: string;
     instruction: string;
     tabs: {
-      id: 'workspace' | 'airlock' | 'security' | 'skills';
+      id: 'briefing' | 'airlock' | 'sandbox' | 'skills';
       label: string;
       sub: string;
     }[];
+    demoModeTooltip: string;
   };
   video: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
+    heading: string;
     caption: string;
-    youtubeId: string; // TODO: Replace with live walkthrough video ID
+    youtubeId: string;
   };
   techStack: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    marquee: StackMarqueeItem[];
+    heading: string;
+    subheading: string;
+    items: StackItem[];
   };
-  quickstart: {
+  getStarted: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    offlineNote: string;
+    heading: string;
+    note: string;
     steps: QuickstartStep[];
   };
   roadmap: {
     eyebrow: string;
-    headingLead: string;
-    headingAccent: string;
-    headingEnd: string;
-    futureItems: { title: string; desc: string; status: string }[];
-    hackathonFeedback: {
+    heading: string;
+    items: RoadmapItem[];
+    feedback: {
       title: string;
       nebiusFeedback: string;
       nemoClawFeedback: string;
     };
   };
   footer: {
+    tagline: string;
     copyright: string;
-    mission: string;
+    columns: {
+      title: string;
+      links: { label: string; href: string }[];
+    }[];
   };
 }
 
 export const content: ContentConfig = {
   meta: {
     name: 'HermesShield',
-    tagline: 'Zero-Trust Personal AI Executive',
-    pitch:
-      'A personal AI executive that can read your workspace and search the web without ever leaking your secrets.',
-    track: 'Personal AI | Best Use of Tavily',
+    tagline: 'A personal AI assistant that keeps your secrets secret',
+    description:
+      'HermesShield reads your project files and researches the web for you. Before anything leaves your computer, it removes private details like emails, keys and internal names.',
+    track: 'Personal AI track · Best Use of Tavily target',
     hackathon: 'Nebius x NVIDIA Global AI Hackathon',
     license: 'MIT',
-    author: 'Sayim07',
+    author: 'Sayim',
   },
 
   links: {
     github: 'https://github.com/Sayim07/NVDIA-Nebius',
-    liveDemo: '#console',
-    youtube: 'https://www.youtube.com/watch?v=placeholder', // TODO: Swap with real walkthrough URL
+    liveDemo: '#demo',
+    youtube: 'https://www.youtube.com/watch?v=placeholder', // TODO: Swap with 3-minute video
     devpost: 'https://devpost.com',
   },
 
   nav: {
+    logoText: 'HermesShield',
     links: [
-      { label: 'Overview', href: '#overview' },
       { label: 'How it works', href: '#how-it-works' },
+      { label: 'Features', href: '#features' },
       { label: 'Airlock', href: '#airlock' },
-      { label: 'Cost', href: '#cost' },
-      { label: 'Live demo', href: '#console' },
+      { label: 'Savings', href: '#savings' },
+      { label: 'Live demo', href: '#demo' },
     ],
-    cta: 'Launch console',
+    cta: 'Try the demo',
     searchLabel: 'Search',
   },
 
   hero: {
-    eyebrow: 'Nebius x NVIDIA Global AI Hackathon // Personal AI Track',
-    titleLead: 'Personal AI that stays',
-    titleAccent: 'private.',
+    eyebrow: 'Nebius x NVIDIA Global AI Hackathon · Personal AI track',
+    titleLead: 'A personal AI assistant that keeps your secrets',
+    titleAccent: 'secret.',
     titleEnd: '',
     subtext:
-      'A personal AI executive that reads your workspace and searches the web without ever leaking your secrets. Guarded out-of-process by NVIDIA NemoClaw and Nebius Token Factory.',
-    primaryCta: 'Launch console',
-    secondaryCta: 'Simulate an attack',
-    trustRowLabel: 'Engineered with open, independent sovereign AI infrastructure',
+      'HermesShield reads your project files and researches the web for you. Before anything leaves your computer, it removes private details like emails, keys and internal names.',
+    primaryCta: 'Try the demo',
+    secondaryCta: 'Watch the attack get blocked',
+    trustLabel: 'Built with open, sovereign AI infrastructure',
     trustLogos: [
-      { name: 'NVIDIA NemoClaw', tag: 'Out-of-Process Guard' },
-      { name: 'Nebius Token Factory', tag: 'High-Throughput GPUs' },
-      { name: 'NVIDIA Nemotron', tag: '3-Tier Cost Routing' },
-      { name: 'Tavily Search', tag: 'Sanitized Web Airlock' },
+      { name: 'NVIDIA NemoClaw', category: 'Security guard' },
+      { name: 'Nebius Token Factory', category: 'GPU inference' },
+      { name: 'NVIDIA Nemotron', category: 'Model routing' },
+      { name: 'Tavily', category: 'Web intelligence' },
     ],
   },
 
   problemSolution: {
-    eyebrow: 'Why HermesShield Exists',
-    headingLead: 'Autonomous agents need',
-    headingAccent: 'boundaries.',
-    headingEnd: '',
+    eyebrow: 'Why privacy-first AI matters',
     problem: {
-      badge: 'The Vulnerability',
-      title: 'AI agents leak secrets when they touch your files or search the web.',
+      badge: 'The problem',
+      title: 'AI agents are powerful, but they see everything.',
       description:
-        'Standard personal AI assistants receive ambient workspace access. One malicious prompt injection or poisoned search result can instruct the agent to exfiltrate SSH keys, .env credentials, and private customer data to attacker servers.',
-      bulletPoints: [
-        'Unchecked prompt injection reads credentials from local files',
-        'Raw search queries send proprietary secrets directly to third-party search engines',
-        'Heavy frontier models bill maximum cost even for trivial regex checks',
+        'One careless web search can leak an API key, a customer email or a private staging domain to third parties. If an agent executes an unchecked command, malicious prompt injections can read secret credentials from your disk.',
+      points: [
+        'Raw web searches send internal project names and keys directly to outside servers',
+        'Unrestricted shell access lets rogue prompts read .env files and private keys',
+        'Frontier models charge full price for basic string filtering tasks',
       ],
     },
-    solution: {
-      badge: 'The Architecture',
-      title: 'HermesShield puts 4 safety layers between your agent and the world.',
+    fix: {
+      badge: 'The fix',
+      title: 'HermesShield sits between your AI and the outside world.',
       description:
-        'Every tool call, file read, and web query passes through an isolated zero-trust sandbox. Secrets are scrubbed before search queries touch the wire, and policy checks run out-of-process in under 15ms.',
-      bulletPoints: [
-        'NemoClaw OpenShell blocks unauthorized filesystem reads and outbound exfiltration',
-        'Tavily Airlock scrubs 100% of PII tokens before sending web search queries',
-        '3-tier FinOps router slashes inference spend by -82.4% with Nemotron Nano/Super/Ultra',
+        'It checks every local action and cleans every outgoing web search before anything touches the wire. You get the full power of a deep assistant with zero fear of data leaks.',
+      points: [
+        'Privacy airlock strips secrets, tokens and emails before searching Tavily',
+        'Command sandbox intercepts file access to .env and SSH keys in under 15ms',
+        'Smart model router cuts token costs by 82.4% by assigning tasks to the right size',
       ],
     },
   },
 
-  metrics: [
-    {
-      value: '-82.4%',
-      numericValue: 82.4,
-      prefix: '-',
-      suffix: '%',
-      decimals: 1,
-      label: 'Inference Cost Reduction',
-      caption: '$0.00142 vs $0.00806 baseline via 3-tier Nemotron routing on Token Factory',
-    },
-    {
-      value: '<15ms',
-      numericValue: 15,
-      prefix: '<',
-      suffix: 'ms',
-      decimals: 0,
-      label: 'Policy Check Latency',
-      caption: 'Out-of-process security verification intercepting rogue bash & file access',
-    },
-    {
-      value: '100%',
-      numericValue: 100,
-      prefix: '',
-      suffix: '%',
-      decimals: 0,
-      label: 'PII Scrubbed in Airlock',
-      caption: 'Dual-pass deterministic regex + Nemotron Nano sanitization before Tavily search',
-    },
-    {
-      value: '0',
-      numericValue: 0,
-      prefix: '',
-      suffix: '',
-      decimals: 0,
-      label: 'Policy Violations Allowed',
-      caption: 'Air-tight OpenShell sandbox boundaries enforced across all tool executions',
-    },
-  ],
-
-  layers: {
-    eyebrow: 'Defense in Depth',
-    headingLead: 'Four sovereign layers of',
-    headingAccent: 'zero-trust',
-    headingEnd: 'protection.',
-    description:
-      'HermesShield isolates the agent runtime from both your local machine and external networks.',
+  results: {
+    eyebrow: 'Measured results',
+    heading: 'Engineered for real-world reliability and speed',
+    footnote: 'Measured in our demo environment against standard frontier models without airlocks.',
     items: [
       {
-        id: 'nemoclaw-sandbox',
-        title: 'NemoClaw OpenShell Sandbox',
-        tagline: 'Out-of-process security boundary',
-        description:
-          'Monitors every shell command and file read out-of-process. Prohibits access to .env, SSH keys, and unauthorized egress endpoints.',
-        tabId: 'security',
-        accent: 'green',
-        badge: 'Layer 1',
+        value: '-82.4%',
+        numericValue: 82.4,
+        prefix: '-',
+        suffix: '%',
+        decimals: 1,
+        label: 'Lower AI cost',
+        caption: 'by routing each task to the right-sized model ($0.00142 vs $0.00806 baseline)',
       },
       {
-        id: 'tavily-airlock',
-        title: 'Privacy-Preserving Tavily Airlock',
-        tagline: 'Zero-PII web scout pipeline',
-        description:
-          'Passes web requests through dual-pass scrubbing (deterministic regex + Nemotron Nano) before dispatching to Tavily for CVE research.',
-        tabId: 'airlock',
-        accent: 'cyan',
-        badge: 'Layer 2',
+        value: '<15 ms',
+        numericValue: 15,
+        prefix: '<',
+        suffix: ' ms',
+        decimals: 0,
+        label: 'Policy check time',
+        caption: 'to check and block a risky command out-of-process',
       },
       {
-        id: 'nebius-finops',
-        title: 'Nebius 3-Tier FinOps Router',
-        tagline: 'Intelligent workload model dispatch',
-        description:
-          'Routes queries between Nemotron-3 Nano (PII sanitization), Super (reasoning), and Ultra (skill synthesis) to reduce token spend by 82.4%.',
-        tabId: 'workspace',
-        accent: 'green',
-        badge: 'Layer 3',
+        value: 'Secrets removed',
+        isTextValue: true,
+        label: 'Dual-pass scrub',
+        caption: 'from every outgoing web search via pattern matching and Nemotron Nano',
       },
       {
-        id: 'hermes-skills',
-        title: 'Hermes Skill Studio',
-        tagline: 'Self-writing persistent memory',
-        description:
-          'Transforms corrections into reusable YAML skills stored in local disk memory, continuously expanding sovereign agent capabilities.',
-        tabId: 'skills',
-        accent: 'cyan',
-        badge: 'Layer 4',
+        value: 'Blocked',
+        isTextValue: true,
+        label: 'Zero breaches',
+        caption: 'access to .env and SSH keys in our prompt injection attack test',
       },
     ],
   },
 
-  airlock: {
-    eyebrow: 'Zero-PII Search Pipeline',
-    headingLead: 'How the privacy airlock',
-    headingAccent: 'neutralizes',
-    headingEnd: 'leaks.',
-    description:
-      'Before your agent searches the web with Tavily, all proprietary secrets and internal workspace identifiers are scrubbed locally.',
+  features: {
+    eyebrow: 'Features',
+    heading: 'Four protective layers between your agent and the web',
+    subheading: 'Each layer runs independently so a failure in one never compromises the others.',
+    items: [
+      {
+        id: 'sandbox',
+        title: 'Safe command sandbox',
+        techTag: 'NVIDIA NemoClaw + OpenShell',
+        description:
+          'Blocks risky commands and access to secret files before they run. Supervised out-of-process so the model cannot override rules.',
+        tabId: 'sandbox',
+        actionLabel: 'Try the sandbox',
+      },
+      {
+        id: 'airlock',
+        title: 'Private web search',
+        techTag: 'Tavily Airlock',
+        description:
+          'Removes emails, keys and internal names from every search before dispatching to Tavily for verified security research.',
+        tabId: 'airlock',
+        actionLabel: 'Inspect the airlock',
+      },
+      {
+        id: 'routing',
+        title: 'Smart cost routing',
+        techTag: 'Nebius Token Factory',
+        description:
+          'Small Nemotron models do easy work, bigger ones handle hard reasoning. Up to 82.4% cheaper with sub-200ms initial response.',
+        tabId: 'briefing',
+        actionLabel: 'See cost breakdown',
+      },
+      {
+        id: 'skills',
+        title: 'Learns your preferences',
+        techTag: 'Hermes Skills',
+        description:
+          'Turns your corrections into reusable skills you can read and edit directly in simple YAML files on your computer.',
+        tabId: 'skills',
+        actionLabel: 'Open skill studio',
+      },
+    ],
+  },
+
+  howItWorks: {
+    eyebrow: 'How it works',
+    tavilyBadge: 'Best Use of Tavily',
+    heading: 'How the privacy airlock protects your searches',
+    subheading:
+      'Before your assistant searches the web with Tavily, all proprietary secrets and internal identifiers are removed locally.',
     steps: [
       {
         step: 1,
-        title: 'Private Prompt',
-        description: 'Agent requires external web research to resolve a task.',
-        detail: 'Contains internal workspace paths, staging URLs, emails, or credentials.',
+        title: 'You ask',
+        shortDesc: 'Your request may contain private details.',
+        detail: 'For example, internal workspace paths, staging URLs, emails or local tokens.',
       },
       {
         step: 2,
-        title: 'Regex Firewall',
-        description: 'High-speed deterministic pattern matching.',
-        detail: 'Instantly redacts API keys, JWTs, emails, and IPv4 addresses.',
+        title: 'Pattern check',
+        shortDesc: 'Instantly strips keys, tokens and internal domains.',
+        detail: 'Fast regex firewall identifies and redacts API keys, JWTs and IP addresses.',
       },
       {
         step: 3,
-        title: 'Nemotron Nano Scrub',
-        description: 'Contextual semantic entity redaction.',
-        detail: 'Extracts purely technical search keywords and CVE identifiers.',
+        title: 'AI clean-up',
+        shortDesc: 'Nemotron Nano removes names and project codenames.',
+        detail: 'Small model extracts pure technical keywords without proprietary context.',
       },
       {
         step: 4,
-        title: 'Safe Tavily Search',
-        description: 'Dispatched to Tavily API with zero private context.',
-        detail: 'Returns verified public security advisories and documentation.',
+        title: 'Safe search',
+        shortDesc: 'Only the cleaned question reaches Tavily.',
+        detail: 'Returns verified public CVE advisories and documentation with zero secret leaks.',
       },
     ],
-    diffSample: {
+    diffCard: {
       rawPrompt:
         'Audit staging auth at https://api.internal-titan.corp/v1 for sayim@corp.io using JWT eyJhbGciOi... and check for FastAPI CVEs.',
-      redactedTokens: [
+      rawPromptRedactions: [
         'https://api.internal-titan.corp/v1',
         'sayim@corp.io',
         'eyJhbGciOi...',
       ],
-      sanitizedQuery:
+      cleanedQuery:
         'FastAPI security advisory CVE-2024 OAuth2 authentication token bypass',
+      cta: 'See it live in demo',
     },
-    cta: 'Open Airlock view',
   },
 
   architecture: {
-    eyebrow: 'System Blueprint',
-    headingLead: 'Decoupled sovereign runtime',
-    headingAccent: 'architecture.',
-    headingEnd: '',
-    description:
-      'High-performance Next.js 14 client paired with a FastAPI runtime, orchestrated over Nebius Token Factory and NVIDIA NemoClaw.',
+    eyebrow: 'Architecture',
+    heading: 'How HermesShield connects your tools safely',
+    subheading:
+      'A decoupled design separating the local assistant from external cloud models and the public web.',
   },
 
-  console: {
-    eyebrow: 'Interactive Execution Environment',
-    title: 'HermesShield Live Console',
-    instruction: 'Step 1: Pick a preset. Step 2: Press Dispatch.',
+  liveDemo: {
+    eyebrow: 'Interactive demo',
+    heading: 'Try it yourself',
+    instruction: '1. Pick a scenario. 2. Press Run.',
     tabs: [
       {
-        id: 'workspace',
-        label: 'Workspace Runner',
-        sub: 'Executive Briefings & Presets',
+        id: 'briefing',
+        label: 'Briefing',
+        sub: 'Workspace scenarios & briefings',
       },
       {
         id: 'airlock',
-        label: 'Tavily Airlock',
-        sub: 'Zero-PII Search Diff',
+        label: 'Airlock',
+        sub: 'Before & after search diff',
       },
       {
-        id: 'security',
-        label: 'NemoClaw Guard',
-        sub: 'Out-of-Process Ledger',
+        id: 'sandbox',
+        label: 'Sandbox',
+        sub: 'NemoClaw policy & attack test',
       },
       {
         id: 'skills',
-        label: 'Hermes Skills',
-        sub: 'Episodic Memory & YAML',
+        label: 'Skills',
+        sub: 'Persistent memory & YAML skills',
       },
     ],
+    demoModeTooltip:
+      'Demo mode uses pre-recorded responses. Add API keys in backend/.env to go live.',
   },
 
   video: {
-    eyebrow: 'Product Walkthrough',
-    headingLead: 'See HermesShield in',
-    headingAccent: 'action.',
-    headingEnd: '',
-    caption: '3-minute technical walkthrough & live attack simulation demo',
-    youtubeId: 'dQw4w9WgXcQ', // TODO: Swap with production video ID
+    eyebrow: 'Video walkthrough',
+    heading: 'See it in 3 minutes',
+    caption: 'A quick tour of the privacy airlock, attack blocker and cost dashboard.',
+    youtubeId: 'dQw4w9WgXcQ', // TODO: Swap with live walkthrough URL
   },
 
   techStack: {
-    eyebrow: 'Stack & Ecosystem',
-    headingLead: 'Powered by open-source',
-    headingAccent: 'infrastructure.',
-    headingEnd: '',
-    marquee: [
+    eyebrow: 'Tech stack',
+    heading: 'Built on open, independent infrastructure',
+    subheading:
+      'We chose open-source components that give you full ownership of your data and models.',
+    items: [
       {
         name: 'NVIDIA NemoClaw',
-        category: 'Security Guard',
-        why: 'Out-of-process isolation intercepting rogue agent actions.',
+        category: 'Security supervisor',
+        why: 'Out-of-process process isolation that intercepts rogue commands before execution.',
       },
       {
         name: 'Nebius Token Factory',
-        category: 'Inference Engine',
-        why: 'Ultra-low latency inference on dedicated NVIDIA GPU clusters.',
+        category: 'Inference platform',
+        why: 'High-throughput NVIDIA GPU clusters with OpenAI-compatible endpoints.',
       },
       {
         name: 'NVIDIA Nemotron-3',
-        category: 'Foundation Models',
-        why: 'Nano for PII scrub, Super for reasoning, Ultra for skill synthesis.',
+        category: 'Foundation models',
+        why: 'Nano for fast PII scrub, Super for reasoning, Ultra for compiling new skills.',
       },
       {
         name: 'Tavily Search',
-        category: 'Web Intelligence',
-        why: 'Developer-tailored web search for real-time security intelligence.',
+        category: 'Web intelligence',
+        why: 'Developer-tailored search API returning high-signal documentation and CVE feeds.',
       },
       {
         name: 'OpenShell Guard',
-        category: 'Sandbox Runtime',
-        why: 'Enforces strict filesystem and network policy boundaries.',
+        category: 'Sandbox runner',
+        why: 'Strict declarative policy engine for filesystem and process supervision.',
       },
       {
         name: 'FastAPI',
-        category: 'Backend Core',
-        why: 'Async Python runtime serving security, agent, and memory APIs.',
+        category: 'Backend runtime',
+        why: 'Fast, async Python runtime serving security, agent, and memory APIs.',
       },
       {
         name: 'Next.js 14',
-        category: 'Frontend UI',
-        why: 'App router with GSAP micro-animations and Lenis smooth scrolling.',
+        category: 'Web frontend',
+        why: 'App router with clean server components, GSAP physics and Lenis smooth scrolling.',
       },
     ],
   },
 
-  quickstart: {
-    eyebrow: 'Developer Onboarding',
-    headingLead: 'Up and running in',
-    headingAccent: 'three',
-    headingEnd: 'steps.',
-    offlineNote: 'Runs in offline simulation mode without API keys.',
+  getStarted: {
+    eyebrow: 'Get started',
+    heading: 'Run it on your computer in 3 steps',
+    note: 'No keys? It runs in demo mode out of the box.',
     steps: [
       {
         step: '01',
         title: 'Clone repository',
         command: 'git clone https://github.com/Sayim07/NVDIA-Nebius.git\ncd "NVDIA - nebuis"',
-        description: 'Clone the MIT-licensed repository to your local environment.',
+        description: 'Get the MIT-licensed code on your local machine.',
       },
       {
         step: '02',
-        title: 'Configure environment keys',
-        command: 'cp backend/.env.example backend/.env\n# Add NEBIUS_API_KEY and TAVILY_API_KEY (optional for live mode)',
-        description: 'Provide your Nebius Token Factory and Tavily keys, or run offline immediately.',
+        title: 'Add API keys (optional)',
+        command: 'cp backend/.env.example backend/.env\n# Add NEBIUS_API_KEY and TAVILY_API_KEY for live models',
+        description: 'Runs in offline demo mode automatically if keys are omitted.',
       },
       {
         step: '03',
-        title: 'Start backend & frontend',
+        title: 'Start backend and frontend',
         command: '# Terminal 1 (FastAPI on :8000)\ncd backend && uvicorn main:app --reload --port 8000\n\n# Terminal 2 (Next.js on :3000)\ncd frontend && npm run dev',
-        description: 'Launch the sovereign runtime and open http://localhost:3000 in your browser.',
+        description: 'Open http://localhost:3000 to interact with HermesShield.',
       },
     ],
   },
 
   roadmap: {
-    eyebrow: 'Future Vision & Hackathon Feedback',
-    headingLead: 'What lies',
-    headingAccent: 'ahead.',
-    headingEnd: '',
-    futureItems: [
+    eyebrow: 'Roadmap & builder feedback',
+    heading: 'What is next for HermesShield',
+    items: [
       {
-        title: 'Multi-Agent Consensus Verification',
-        desc: 'Cross-verifying high-impact workspace write operations across 2 independent Nemotron models.',
-        status: 'In Design',
+        title: 'Two-model consensus',
+        description:
+          'Cross-verify high-impact workspace file changes with two independent Nemotron models before saving.',
+        status: 'In design',
       },
       {
-        title: 'Encrypted Episodic Memory Enclaves',
-        desc: 'Hardware-level memory encryption for MEMORY.md on NVIDIA confidential computing instances.',
+        title: 'Encrypted local memory',
+        description:
+          'Hardware-level memory encryption for stored preferences on confidential computing GPUs.',
         status: 'Planned',
       },
       {
-        title: 'Browser-Native Web Scraping Airlock',
-        desc: 'Sandboxed headless browser execution with automatic DOM secret redacting.',
+        title: 'Browser DOM airlock',
+        description:
+          'Scrub credentials and private tokens from web page DOMs before passing page text to the model.',
         status: 'Research',
       },
     ],
-    hackathonFeedback: {
-      title: 'Builder Feedback for Nebius & NVIDIA',
+    feedback: {
+      title: 'Our feedback on Nebius Token Factory and NemoClaw',
       nebiusFeedback:
-        'Nebius Token Factory provided extraordinary TTFT (<180ms) and rock-solid OpenAI-compatible endpoints for Nemotron-3. Effortless tier switching.',
+        'Nebius Token Factory delivered exceptional time-to-first-token (<180ms) and clean drop-in OpenAI client compatibility for Nemotron-3. Switching between Nano, Super, and Ultra tiers was seamless.',
       nemoClawFeedback:
-        'NemoClaw and OpenShell provided the ideal out-of-process isolation needed for sovereign personal agents without docker overhead.',
+        'NemoClaw and OpenShell gave us the precise out-of-process isolation needed to stop prompt injection attacks without the heavy overhead of Docker containers.',
     },
   },
 
   footer: {
-    copyright: '© 2026 HermesShield. Built under MIT License.',
-    mission:
-      'Engineered for the Nebius x NVIDIA Global AI Hackathon. Sovereign Personal AI Track.',
+    tagline: 'A personal AI assistant that keeps your secrets secret.',
+    copyright: '© 2026 HermesShield. MIT License.',
+    columns: [
+      {
+        title: 'Project',
+        links: [
+          { label: 'GitHub Repository', href: 'https://github.com/Sayim07/NVDIA-Nebius' },
+          { label: 'Live Demo', href: '#demo' },
+          { label: 'Video Walkthrough', href: 'https://www.youtube.com/watch?v=placeholder' },
+          { label: 'Documentation', href: 'https://github.com/Sayim07/NVDIA-Nebius#readme' },
+        ],
+      },
+      {
+        title: 'Built with',
+        links: [
+          { label: 'NVIDIA NemoClaw', href: 'https://developer.nvidia.com' },
+          { label: 'Nebius Token Factory', href: 'https://tokenfactory.nebius.com' },
+          { label: 'NVIDIA Nemotron', href: 'https://build.nvidia.com' },
+          { label: 'Tavily Search', href: 'https://tavily.com' },
+        ],
+      },
+      {
+        title: 'Hackathon',
+        links: [
+          { label: 'Nebius x NVIDIA Hackathon', href: 'https://devpost.com' },
+          { label: 'Personal AI Track', href: 'https://devpost.com' },
+          { label: 'Best Use of Tavily Target', href: 'https://devpost.com' },
+        ],
+      },
+    ],
   },
 };

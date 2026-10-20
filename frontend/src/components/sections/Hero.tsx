@@ -1,6 +1,6 @@
 /**
  * Section 2: Hero
- * 10-second elevator pitch with headline, italic serif accent, dual CTAs, trust row, and lightweight background mesh.
+ * Calm, professional, premium hero with plain English copy, dual CTAs, product browser frame mockup, and trust row.
  */
 
 'use client';
@@ -8,9 +8,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { content } from '@/content/content';
-import { HeroMesh } from '@/components/ui/HeroMesh';
 import { Magnetic } from '@/components/ui/Magnetic';
-import { Terminal, ShieldAlert, ArrowDown, Sparkles, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowRight,
+  ShieldCheck,
+  ShieldAlert,
+  Lock,
+  Search,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
 
 interface HeroProps {
   onScrollToConsole: () => void;
@@ -22,106 +29,191 @@ export const Hero: React.FC<HeroProps> = ({
   onSimulateAttack,
 }) => {
   return (
-    <section
-      id="overview"
-      className="relative pt-28 sm:pt-36 lg:pt-44 pb-16 sm:pb-24 overflow-hidden"
-    >
-      {/* Background Interactive Mesh (Respects prefers-reduced-motion) */}
-      <HeroMesh />
+    <section className="relative pt-24 sm:pt-32 lg:pt-36 pb-16 sm:pb-20 overflow-hidden bg-bg">
+      {/* Soft light dotted grid + gentle forest radial wash */}
+      <div
+        className="absolute inset-0 bg-grid-pattern-light pointer-events-none opacity-80"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(11,110,79,0.06),transparent_70%)] pointer-events-none"
+        aria-hidden="true"
+      />
 
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-        {/* Eyebrow Pill Badge (No square brackets) */}
+      <div className="relative max-w-[1200px] mx-auto px-4 sm:px-6">
+        {/* Top Eyebrow Pill: Lime dot + sentence case + no brackets */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="flex items-center space-x-2.5 mb-6"
+          className="flex items-center justify-start mb-6"
         >
-          <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-surface-1 border border-white/10 text-xs text-white/80 font-mono tracking-tight shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-nvidia animate-pulse" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-surface border border-border shadow-soft text-xs font-medium text-ink">
+            <span className="w-2 h-2 rounded-full bg-highlight shrink-0" />
             <span>{content.hero.eyebrow}</span>
-          </span>
+          </div>
         </motion.div>
 
-        {/* Shorter Headline, Max 2 Lines with Italic Serif Accent Word */}
+        {/* H1: Sentence case, max 2 lines, normal tracking, optional single italic serif word */}
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.08] max-w-4xl"
+          transition={{ duration: 0.6, delay: 0.08, ease: 'easeOut' }}
+          className="font-heading text-4xl sm:text-5xl lg:text-[3.5rem] font-semibold text-ink leading-[1.12] tracking-[-0.02em] max-w-4xl"
         >
           {content.hero.titleLead}{' '}
-          <span className="font-editorial italic font-normal text-nvidia text-5xl sm:text-7xl lg:text-8xl tracking-normal">
+          <span className="font-editorial italic font-normal text-primary">
             {content.hero.titleAccent}
           </span>
         </motion.h1>
 
-        {/* Plain-English Subtext (2 Sentences Max, >= 16px, >= 70% contrast) */}
+        {/* Plain-English Subtext: 17-18px, line-height 1.6, max 65 chars per line */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.16, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-6 max-w-2xl text-base sm:text-lg text-white/75 leading-relaxed font-sans"
+          transition={{ duration: 0.6, delay: 0.16, ease: 'easeOut' }}
+          className="mt-6 text-lg sm:text-[19px] text-ink-muted leading-[1.6] max-w-2xl font-sans"
         >
           {content.hero.subtext}
         </motion.p>
 
-        {/* Call to Actions */}
+        {/* CTAs: "Try the demo" (primary, magnetic) · "Watch the attack get blocked" */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.24, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-10 flex flex-wrap items-center gap-4"
+          transition={{ duration: 0.6, delay: 0.24, ease: 'easeOut' }}
+          className="mt-8 flex flex-wrap items-center gap-3.5"
         >
-          <Magnetic strength={0.25}>
+          <Magnetic strength={0.2}>
             <button
               onClick={onScrollToConsole}
-              aria-label="Launch interactive console"
-              className="inline-flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-nvidia hover:bg-nvidia-hover text-black font-semibold text-sm transition-all duration-200 shadow-[0_0_24px_rgba(118,185,0,0.3)] hover:shadow-[0_0_36px_rgba(118,185,0,0.5)] hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Try the demo"
+              className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-medium text-sm transition-all duration-200 shadow-soft hover:shadow-card hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              <Terminal className="w-4 h-4 stroke-[2.5]" />
               <span>{content.hero.primaryCta}</span>
-              <ArrowDown className="w-4 h-4 stroke-[2] animate-bounce" />
+              <ArrowRight className="w-4 h-4 stroke-[2]" />
             </button>
           </Magnetic>
 
-          <Magnetic strength={0.25}>
-            <button
-              onClick={onSimulateAttack}
-              aria-label="Simulate prompt injection attack"
-              className="inline-flex items-center space-x-2.5 px-6 py-3.5 rounded-xl bg-surface-1 hover:bg-threat-surface text-white/90 hover:text-threat border border-white/10 hover:border-threat-border font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-threat"
-            >
-              <ShieldAlert className="w-4 h-4 text-threat" />
-              <span>{content.hero.secondaryCta}</span>
-            </button>
-          </Magnetic>
+          <button
+            onClick={onSimulateAttack}
+            aria-label="Watch the attack get blocked"
+            className="inline-flex items-center space-x-2 px-4 py-3 rounded-xl bg-surface hover:bg-surface-2 text-ink border border-border font-medium text-sm transition-all duration-200 shadow-soft hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2"
+          >
+            <ShieldAlert className="w-4 h-4 text-danger shrink-0" />
+            <span>{content.hero.secondaryCta}</span>
+          </button>
         </motion.div>
 
-        {/* Trust Row */}
+        {/* Product Mockup in Clean Browser Frame (Real UI, showing Privacy Airlock Diff) */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 pt-8 border-t border-white/[0.08]"
+          transition={{ duration: 0.7, delay: 0.32, ease: 'easeOut' }}
+          className="mt-12 sm:mt-16 rounded-2xl bg-surface border border-border shadow-card overflow-hidden"
         >
-          <p className="text-xs font-mono uppercase tracking-wider text-white/40 mb-4">
-            {content.hero.trustRowLabel}
+          {/* Browser Window Chrome */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-2/60">
+            <div className="flex items-center space-x-2">
+              <span className="w-3 h-3 rounded-full bg-[#E3E6E0]" />
+              <span className="w-3 h-3 rounded-full bg-[#E3E6E0]" />
+              <span className="w-3 h-3 rounded-full bg-[#E3E6E0]" />
+            </div>
+            <div className="flex items-center space-x-2 px-3 py-1 rounded-md bg-surface border border-border text-xs font-mono text-ink-muted">
+              <Lock className="w-3 h-3 text-primary shrink-0" />
+              <span>hermesshield.local/airlock</span>
+            </div>
+            <div className="flex items-center space-x-2 text-xs font-mono text-primary font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-highlight animate-pulse" />
+              <span>Airlock active</span>
+            </div>
+          </div>
+
+          {/* Browser Content: Side-by-side Before/After Privacy Scrubbing */}
+          <div className="p-5 sm:p-7 grid grid-cols-1 md:grid-cols-2 gap-5 bg-surface">
+            {/* Left Column: What your AI wanted to search */}
+            <div className="rounded-xl border border-border bg-surface-2/40 p-4 sm:p-5 flex flex-col justify-between space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-ink uppercase tracking-wide">
+                    What your AI wanted to search
+                  </span>
+                  <span className="text-[11px] font-mono text-danger font-medium px-2 py-0.5 rounded bg-danger-subtle border border-danger/20">
+                    3 secrets detected
+                  </span>
+                </div>
+                <div className="text-sm font-mono text-ink-muted leading-relaxed bg-surface p-3 rounded-lg border border-border/80">
+                  Audit staging auth at{' '}
+                  <span className="bg-danger-subtle text-danger font-semibold px-1 rounded border border-danger/30">
+                    api.internal-titan.corp
+                  </span>{' '}
+                  for{' '}
+                  <span className="bg-danger-subtle text-danger font-semibold px-1 rounded border border-danger/30">
+                    sayim@internal.corp
+                  </span>{' '}
+                  with JWT{' '}
+                  <span className="bg-danger-subtle text-danger font-semibold px-1 rounded border border-danger/30">
+                    eyJhbGciOi...
+                  </span>{' '}
+                  and check for FastAPI CVEs.
+                </div>
+              </div>
+
+              <div className="text-[12px] text-ink-muted flex items-center space-x-1.5 pt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-danger" />
+                <span>Blocked from leaving your computer</span>
+              </div>
+            </div>
+
+            {/* Right Column: Cleaned query sent to Tavily */}
+            <div className="rounded-xl border border-primary/20 bg-primary-subtle/30 p-4 sm:p-5 flex flex-col justify-between space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                    Cleaned query sent to Tavily
+                  </span>
+                  <span className="text-[11px] font-mono text-primary font-medium px-2 py-0.5 rounded bg-surface border border-primary/20 flex items-center space-x-1">
+                    <CheckCircle2 className="w-3 h-3 text-primary" />
+                    <span>Zero secrets</span>
+                  </span>
+                </div>
+                <div className="text-sm font-mono text-ink leading-relaxed bg-surface p-3 rounded-lg border border-primary/20">
+                  FastAPI security advisory CVE-2024 OAuth2 authentication token bypass
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-[12px] text-ink-muted pt-1">
+                <span className="flex items-center space-x-1.5 text-primary font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                  <span>Clean search dispatched to Tavily</span>
+                </span>
+                <span className="font-mono text-[11px] text-ink-subtle">12.4 ms</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Trust Row Under Hero */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+          className="mt-12 sm:mt-16 pt-8 border-t border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-subtle shrink-0">
+            {content.hero.trustLabel}
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-4 sm:gap-8">
             {content.hero.trustLogos.map((item) => (
               <div
                 key={item.name}
-                className="flex flex-col p-3.5 rounded-xl bg-surface-1/60 border border-white/[0.06] hover:border-white/[0.14] transition-colors"
+                className="flex items-center space-x-2 text-ink-muted hover:text-ink transition-colors"
               >
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-nvidia shrink-0" />
-                  <span className="font-heading font-medium text-sm text-white/90 truncate">
-                    {item.name}
-                  </span>
-                </div>
-                <span className="text-[11px] font-mono text-white/40 mt-1 pl-5 truncate">
-                  {item.tag}
+                <div className="w-1.5 h-1.5 rounded-full bg-highlight shrink-0" />
+                <span className="text-sm font-medium">{item.name}</span>
+                <span className="hidden lg:inline text-xs font-mono text-ink-subtle">
+                  · {item.category}
                 </span>
               </div>
             ))}

@@ -136,9 +136,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#07090D] text-slate-100 font-sans selection:bg-nvidia/20 selection:text-nvidia">
+    <div className="min-h-screen flex flex-col bg-bg text-ink font-sans selection:bg-primary/10 selection:text-primary">
       {/* Section 1: Modern Responsive Navbar */}
       <Navbar
+
         onOpenCommand={() => {
           const down = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
           document.dispatchEvent(down);

@@ -9,52 +9,71 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "#07090D",
-        foreground: "#F8FAFC",
-        canvas: "#07090D",
+        // Theme: Paper & Forest
+        bg: "#F7F7F4",
         surface: {
-          DEFAULT: "#0D1117",
-          1: "#0E131B",
-          2: "#151C27",
-          3: "#1C2533",
+          DEFAULT: "#FFFFFF",
+          2: "#EEF1EC",
+          3: "#E5E9E2",
+        },
+        ink: {
+          DEFAULT: "#0F1A17",
+          muted: "#56625E",
+          subtle: "#8A9490",
         },
         border: {
-          subtle: "rgba(255, 255, 255, 0.08)",
-          DEFAULT: "rgba(255, 255, 255, 0.10)",
-          strong: "rgba(255, 255, 255, 0.16)",
+          DEFAULT: "#E3E6E0",
+          subtle: "#ECEEE9",
+          dark: "#22352F",
         },
-        nvidia: {
+        primary: {
+          DEFAULT: "#0B6E4F",
+          hover: "#095A41",
+          subtle: "#E7F3EE",
+        },
+        highlight: {
           DEFAULT: "#76B900",
-          hover: "#87D300",
-          glow: "rgba(118, 185, 0, 0.25)",
+          subtle: "#F0F8E2",
         },
-        cyan: {
-          DEFAULT: "#22D3EE",
-          hover: "#38BDF8",
-          glow: "rgba(34, 211, 238, 0.25)",
+        info: {
+          DEFAULT: "#2563EB",
+          subtle: "#EFF6FF",
         },
-        threat: {
-          DEFAULT: "#EF4444",
-          surface: "rgba(239, 68, 68, 0.12)",
-          border: "rgba(239, 68, 68, 0.35)",
+        danger: {
+          DEFAULT: "#D92D20",
+          subtle: "#FEF3F2",
         },
         warning: {
-          DEFAULT: "#F59E0B",
-          surface: "rgba(245, 158, 11, 0.12)",
-          border: "rgba(245, 158, 11, 0.35)",
+          DEFAULT: "#B54708",
+          subtle: "#FFFAEB",
+        },
+        dark: {
+          DEFAULT: "#0E1F1A",
+          surface: "#142A24",
+          card: "#18322B",
+          border: "#23443B",
         },
       },
       fontFamily: {
         sans: ["'Inter'", "'Geist'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
-        heading: ["'Space Grotesk'", "sans-serif"],
+        heading: ["'Inter Tight'", "'Geist'", "-apple-system", "sans-serif"],
         serif: ["'Instrument Serif'", "Georgia", "serif"],
         mono: ["'Geist Mono'", "'JetBrains Mono'", "monospace"],
       },
       borderRadius: {
+        'xl': '12px',
         '2xl': '16px',
+        '3xl': '20px',
+      },
+      boxShadow: {
+        'soft': '0 1px 2px rgba(15, 26, 23, 0.06)',
+        'card': '0 1px 3px rgba(15, 26, 23, 0.05), 0 8px 24px rgba(15, 26, 23, 0.06)',
+        'float': '0 12px 32px -4px rgba(15, 26, 23, 0.12), 0 4px 12px rgba(15, 26, 23, 0.06)',
+        'dark-card': '0 1px 3px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(0, 0, 0, 0.35)',
       },
     },
   },
   plugins: [],
 };
+
 

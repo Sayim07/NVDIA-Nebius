@@ -1,6 +1,39 @@
 # Changelog — HermesShield UI Redesign
 
+## [Phase 2: "Paper & Forest" Light Theme & Stripe/Linear Aesthetic Redesign] — 2026-10-20
+
+### Added
+- **Paper & Forest Design System Tokens (`frontend/tailwind.config.js` & `frontend/src/app/globals.css`):**
+  - Warm paper canvas (`#F7F7F4`), clean surfaces (`#FFFFFF`, `#EEF1EC`), deep ink typography (`#0F1A17`, muted `#56625E`), and Forest Green primary (`#0B6E4F`, hover `#095A41`).
+  - NVIDIA Lime (`#76B900`) reserved for dots, badges, and status indicators.
+  - Dark container token (`#0E1F1A`) reserved exclusively for the Live Console and Get Started code block.
+  - Soft multi-stop shadows (`0 1px 2px rgba(15,26,23,.06)` and `0 8px 24px rgba(15,26,23,.06)`) replacing dark glow effects.
+  - Thin scroll progress bar in Forest Green (`#0B6E4F`) fixed at the top of the viewport.
+- **Paper & Forest Navbar (`frontend/src/components/sections/Navbar.tsx`):**
+  - Single-line non-wrapping header with white glassmorphic blur on scroll (`scrollY > 16`).
+  - Shield mark icon + "HermesShield" logo (removed "°").
+  - Clean sentence-case navigation links (*How it works*, *Features*, *Airlock*, *Savings*, *Live demo*).
+  - Compact `[⌘K]` search icon button and Forest Green *"Try the demo"* primary CTA.
+- **Paper & Forest Hero (`frontend/src/components/sections/Hero.tsx`):**
+  - Pill badge with lime dot: *"Nebius x NVIDIA Global AI Hackathon · Personal AI track"*.
+  - Sentence-case headline in Inter Tight: *"A personal AI assistant that keeps your secrets secret."* with a single italic Instrument Serif accent word (*secret.*).
+  - Plain-English 2-sentence subtext with max 65 characters per line (WCAG AA compliant contrast).
+  - Dual CTAs: Magnetic *"Try the demo"* and *"Watch the attack get blocked"*.
+  - Real browser window mockup with window controls and side-by-side privacy diff (*"What your AI wanted to search"* vs *"Cleaned query sent to Tavily"*).
+  - Clean trust row highlighting NVIDIA NemoClaw, Nebius Token Factory, NVIDIA Nemotron, and Tavily.
+- **SEO & Social Assets:**
+  - Dynamic OpenGraph generator (`frontend/src/app/opengraph-image.tsx`) in Paper & Forest theme.
+  - SVG shield favicon (`frontend/src/app/icon.svg`).
+  - Canonical URL set to `https://nvdia-nebius.vercel.app`.
+
+### Removed (Anti-Slop Cleanup)
+- Removed all `[ SQUARE BRACKET ]` labels and `01 //` numbering.
+- Removed neon green on black, heavy drop-shadows, and background text gradients.
+- Removed repetitive layer tags and AI jargon across all copy.
+- Removed the "°" degree symbol from the brand name.
+
 ## [Phase 1: Sections 1 & 2 (Navbar + Hero) & Foundation Architecture] — 2026-10-19
+
 
 ### Added
 - **Centralized Content Store (`frontend/src/content/content.ts` & `frontend/content/content.ts`):**
