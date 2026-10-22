@@ -101,10 +101,12 @@ async def sanitize_for_tavily(raw_context: str, user_instruction: str = "") -> A
             response = await client.chat.completions.create(
                 model=MODEL_TIER_1_SCRUBBER,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=60,
+                max_tokens=256,
                 temperature=0.0,
             )
             sanitized_query = (response.choices[0].message.content or "").strip().replace('"', '')
+            if not sanitized_query:
+                sanitized_query = extract_technical_keywords(full_text)
         except Exception as e:
             logger.warning("Tier 1 Nemotron scrubber failed, falling back to deterministic keyword extractor: %s", str(e))
             sanitized_query = extract_technical_keywords(full_text)

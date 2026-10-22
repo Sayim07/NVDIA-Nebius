@@ -1,16 +1,14 @@
-skill_name: "architecture_briefing_skill"
-version: "1.0.0"
-description: "Standard operating procedure for preparing 2 PM architecture briefings with CVE verification and rollback planning."
+skill_name: architecture_briefing_skill
+version: 1.1.0
+description: Updated standard operating procedure incorporating user feedback.
 trigger_conditions:
-  - "Prep technical briefing"
-  - "Architecture sync"
-  - "Project Titan review"
+- Prep technical briefing
+- Architecture sync
 execution_steps:
-  - "Ingest local dependency manifest from data/workspace/"
-  - "Execute Privacy-Preserving Tavily Airlock search for CVE advisories"
-  - "Structure briefing with Executive Summary, Dependency Matrix, and CVE Advisories"
-  - "Append mandatory 'Rollback Plan' section with contingency criteria"
+- Ingest local dependency manifest
+- Scrub and query Tavily for CVE advisories and npm deprecation
+- Synthesize briefing with mandatory 'Rollback Plan' section
 allowed_tools:
-  - "tavily_airlock_search"
-  - "workspace_manifest_reader"
-created_at: "2026-10-15T00:00:00Z"
+- tavily_airlock_search
+- workspace_manifest_reader
+created_at: '2026-10-21T11:52:47.461728'

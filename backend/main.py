@@ -1,4 +1,4 @@
-# backend/main.py
+# backend/main.py - updated with dynamic env loading
 """HermesShield FastAPI Agent Runtime Entrypoint."""
 
 import sys
@@ -90,6 +90,8 @@ async def health():
 @app.get("/api/v1/health", response_model=HealthStatus, tags=["System"])
 async def get_health():
     """System health check and connection status indicator."""
+    if _env_path.exists():
+        load_dotenv(_env_path, override=True)
 
     nebius_connected = bool(os.getenv("NEBIUS_API_KEY"))
     tavily_connected = bool(os.getenv("TAVILY_API_KEY"))

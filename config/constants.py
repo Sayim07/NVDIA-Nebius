@@ -18,8 +18,8 @@ APP_NAME: str = "HermesShield"
 APP_VERSION: str = "1.0.0"
 
 # Nebius Token Factory Model Endpoints & Configuration
-NEBIUS_BASE_URL: str = "https://api.tokenfactory.nebius.com/v1"
-MODEL_TIER_1_SCRUBBER: str = "nvidia/nemotron-3-nano-30b-a3b"      # Fallback: nvidia/Nemotron-3_5-Lightning
+NEBIUS_BASE_URL: str = "https://api.studio.nebius.ai/v1"
+MODEL_TIER_1_SCRUBBER: str = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"      # Fallback: nvidia/Nemotron-3_5-Lightning
 MODEL_TIER_2_SYNTHESIS: str = "nvidia/nemotron-3-super-120b-a12b"
 MODEL_TIER_3_COMPILER: str = "nvidia/Nemotron-3-Ultra-550b-a55b"
 
