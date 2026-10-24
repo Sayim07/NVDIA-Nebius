@@ -72,11 +72,36 @@ The lifecycle of an executive request in **HermesShield** moves through five dis
    - UI highlights scrubbed PII tokens with red badges and approved queries with green badges.
    - UI renders the compiled briefing in markdown with copy/export actions.
 
+### 2.3 Standalone Desktop IDE Arbitrary Codebase Flow
+1. **Directory Selection:**
+   - User clicks *"Select Project Folder"* in the Desktop IDE.
+   - Electron main process invokes native OS dialog `dialog.showOpenDialog({ properties: ['openDirectory'] })`.
+2. **Recursive Workspace Indexing:**
+   - `desktop/main.js` traverses the selected folder 2 levels deep, ignoring `node_modules`, `.git`, `.venv`, and `dist`.
+   - Discovers root or nested `package.json`, `requirements.txt`, `pyproject.toml`, or `Cargo.toml`.
+   - Packages dependencies and versions into a normalized JSON context string.
+3. **Executive Audit Dispatch:**
+   - Electron renderer sends `POST /api/v1/agent/run` with `workspace_context` containing the discovered packages and project name.
+   - FastAPI backend prioritizes `workspace_context` over default Project Titan manifests.
+   - System prompt dynamically adapts to audit the chosen local repository without bias.
+4. **Desktop Presentation:**
+   - Markdown tables for Dependency Health and Rollback Plans are rendered cleanly in the dark Antigravity-styled viewport.
+   - User can click *"Export Report (.md)"* to save the audit locally via native OS save dialog.
+
+### 2.4 Bring-Your-Own-Key (BYOK) Management Flow
+1. User clicks the **Key / Settings** tab in the Desktop IDE activity bar.
+2. Desktop queries `GET /api/v1/settings/keys` to retrieve connection status and masked keys (e.g., `sk-neb...a1b2`).
+3. User enters new keys for Nebius Token Factory, Tavily, or Context.dev and clicks *"Save API Keys"*.
+4. Backend writes updated keys directly to `backend/.env` without committing them to git.
+5. In-memory clients hot-reload the new credentials without requiring a backend restart.
+
 ---
 
 ## 3. Screen-Level Flow & Layout Hierarchy
 
-HermesShield operates as a unified, high-density 4-panel Cyber Executive Dashboard:
+HermesShield provides two tailored interfaces sharing the same FastAPI runtime:
+
+### A. Web Console (Next.js 14 — Executive Cyber Command Center)
 
 ```
 +----------------------------------------------------------------------------------------------------+

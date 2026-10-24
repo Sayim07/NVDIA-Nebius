@@ -39,7 +39,9 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
 
 ## 2. Technical Stack & Architectural Justification
 
-### 2.1 Frontend Layer
+### 2.1 Frontend & Client Layers
+
+#### A. Web Console (Next.js 14)
 - **Framework: Next.js 14 (App Router)**
   - *Justification:* Industry-standard React framework supporting server components, optimized client state, and rapid local iteration. Single default chosen; locked on Day 1.
 - **Language: TypeScript 5.0+**
@@ -48,14 +50,20 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
   - *Justification:* Rapid implementation of rich cybersecurity dark-mode UI palettes (`slate-950`, emerald cyber accents, rose security banners) without bloated CSS.
 - **UI Primitives: Radix UI & cmdk**
   - *Justification:* Accessible, unstyled primitives (`Dialog`, `Tabs`, `Tooltip`) paired with `cmdk` for the global Command Palette (`Ctrl+K` / `Cmd+K`).
-- **3D Physics & Motion Engine: GSAP (`gsap` + `@gsap/react`)**
-  - *Justification:* High-performance 3D perspective card tilts with specular reflection (`TiltCard`), magnetic cursor attraction (`Magnetic`), and luxury numerical tickers (`AnimatedCounter`).
-- **Layout & Spring Animation: Framer Motion v11+**
-  - *Justification:* Fluid spring transitions, animated tab indicators (`layoutId`), and red-team violation alert slides.
-- **Inertial Smooth Scrolling: Lenis (`lenis`)**
-  - *Justification:* Momentum-based smooth scrolling providing a luxury, agency-grade feel.
+- **Motion & Scrolling: Framer Motion v11+ & Lenis**
+  - *Justification:* Calm, professional transitions, animated tab indicators (`layoutId`), and smooth scrolling. Flat luxury aesthetic with zero jitter.
 - **Icons: Lucide React**
   - *Justification:* Clean, lightweight iconography for cyber badges, status pills, and terminal tabs.
+
+#### B. Standalone Desktop IDE (Electron)
+- **Framework: Electron 31+ with Node.js 20+**
+  - *Justification:* Provides native operating system file dialogs and filesystem traversal impossible inside standard web browser sandboxes.
+- **IPC Architecture: Context-Isolated Preload (`desktop/preload.js`)**
+  - *Justification:* Secure `contextBridge` exposing strictly vetted IPC channels (`selectDirectory`, `saveReport`) to the renderer without exposing full Node.js internals to web contents.
+- **Recursive Directory Scanner (`desktop/main.js`):**
+  - *Justification:* 2-level deep traversal indexing `package.json`, `requirements.txt`, `pyproject.toml`, and `Cargo.toml` across subfolders (e.g., `frontend/`, `backend/`, `engine/`) while strictly pruning heavy directories (`node_modules`, `.git`, `.venv`, `dist`).
+- **Packaging: `electron-builder`**
+  - *Justification:* Creates unpacked portable Windows binaries (`desktop/dist/win-unpacked/HermesShield IDE.exe`) and single-click NSIS installers.
 
 ### 2.2 Backend Layer
 - **Runtime: Python 3.11+**
@@ -66,8 +74,8 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
   - *Justification:* Standard ASGI server for production-grade async Python.
 - **LLM Gateway Client: `openai` (v1.35+ `AsyncOpenAI`)**
   - *Justification:* Official client for OpenAI-compatible gateways. Connects directly to the Nebius Token Factory endpoint (`https://api.tokenfactory.nebius.com/v1`).
-- **Web Search Client: `tavily-python` (v0.5+)**
-  - *Justification:* Official Tavily client for structured web search and markdown content extraction.
+- **Web Search Clients: `tavily-python` (v0.5+) & `context.dev` SDK**
+  - *Justification:* Tavily client for structured web search and markdown content extraction, paired with `context.dev` for GFM markdown extraction and CVE discovery.
 - **Serialization & Validation: Pydantic v2 & PyYAML v6+**
   - *Justification:* Strict runtime schema validation for API payloads and Hermes skill files.
 - **Database Driver: Built-in `sqlite3`**
@@ -75,7 +83,7 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
 
 ### 2.3 Layer-by-Layer Decision Defaults (Locked Day 1)
 - *Frontend state management:* Native React state (`useState`, `useCallback`, `useEffect`). No Redux, Zustand, or Jotai needed for single-dashboard scope.
-- *Styling strategy:* Pure Tailwind CSS utility classes with CSS variables in `globals.css`.
+- *Styling strategy:* Pure Tailwind CSS utility classes with CSS variables in `globals.css` (Web) and VS Code custom dark tokens in `style.css` (Desktop).
 - *Agent architecture:* Pure Python async orchestration functions. Strictly **no** LangChain, LlamaIndex, AutoGen, or CrewAI.
 
 ---
@@ -87,7 +95,8 @@ HermesShield is a decoupled, local-first sovereign agent control center consisti
 | **Nebius Token Factory** | REST via `AsyncOpenAI` (`https://api.tokenfactory.nebius.com/v1`) | Hackathon credits ($0.06 to $1.00 per 1M input tokens) | `NEBIUS_API_KEY` (Bearer header) | Multi-tier Nemotron model inference (Nano/Lightning, Super, Ultra). |
 | **Tavily Search API** | Python SDK (`tavily.TavilyClient`) | Free Researcher Tier (1,000 requests/month) | `TAVILY_API_KEY` in environment | Privacy-scrubbed web intelligence gathering. Protected by 24h SQLite query cache. |
 | **Tavily Extract API** | Python SDK (`tavily.TavilyClient.extract`) | Included in Free Researcher Tier | `TAVILY_API_KEY` in environment | Full-page Markdown extraction from top advisory URLs discovered via search. |
-| **Local Workspace Manifests** | Direct filesystem read (`data/workspace/*.json`) | $0.00 (Local) | None | Ingestion of project dependency versions, commit history, and meeting notes. |
+| **Context.dev API** | Python SDK (`from context.dev import ContextDev`) | Pay-per-credit | `CONTEXT_DEV_API_KEY` in environment | GFM Markdown web scraping, real-time search, and research extraction. |
+| **Local Workspace Manifests** | Direct filesystem read (`data/workspace/*.json` or arbitrary local repos) | $0.00 (Local) | None | Ingestion of project dependency versions, commit history, and meeting notes. |
 
 ---
 

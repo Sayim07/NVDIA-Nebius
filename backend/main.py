@@ -108,6 +108,71 @@ async def get_health():
         context_dev_connected=context_dev_connected,
     )
 
+@app.get("/api/v1/settings/keys", tags=["Settings"])
+async def get_settings_keys():
+    """Retrieve masked status of configured API keys."""
+    if _env_path.exists():
+        load_dotenv(_env_path, override=True)
+
+    nebius_key = os.getenv("NEBIUS_API_KEY", "")
+    tavily_key = os.getenv("TAVILY_API_KEY", "")
+    context_key = os.getenv("CONTEXT_DEV_API_KEY", "")
+
+    def mask(k: str) -> str:
+        if not k:
+            return ""
+        if len(k) <= 8:
+            return "****"
+        return f"{k[:6]}...{k[-4:]}"
+
+    return {
+        "nebius_configured": bool(nebius_key),
+        "nebius_masked": mask(nebius_key),
+        "tavily_configured": bool(tavily_key),
+        "tavily_masked": mask(tavily_key),
+        "context_dev_configured": bool(context_key),
+        "context_dev_masked": mask(context_key),
+    }
+
+from pydantic import BaseModel
+class UpdateKeysRequest(BaseModel):
+    nebius_api_key: str | None = None
+    tavily_api_key: str | None = None
+    context_dev_api_key: str | None = None
+
+@app.post("/api/v1/settings/keys", tags=["Settings"])
+async def save_settings_keys(req: UpdateKeysRequest):
+    """Save user-provided API keys to backend/.env and reload runtime."""
+    env_lines = {}
+    if _env_path.exists():
+        for line in _env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                env_lines[k.strip()] = v.strip()
+
+    if req.nebius_api_key is not None and req.nebius_api_key.strip():
+        env_lines["NEBIUS_API_KEY"] = req.nebius_api_key.strip()
+    if req.tavily_api_key is not None and req.tavily_api_key.strip():
+        env_lines["TAVILY_API_KEY"] = req.tavily_api_key.strip()
+    if req.context_dev_api_key is not None and req.context_dev_api_key.strip():
+        env_lines["CONTEXT_DEV_API_KEY"] = req.context_dev_api_key.strip()
+
+    new_content = "\n".join(f"{k}={v}" for k, v in env_lines.items()) + "\n"
+    _env_path.write_text(new_content, encoding="utf-8")
+    load_dotenv(_env_path, override=True)
+
+    nebius_connected = bool(os.getenv("NEBIUS_API_KEY"))
+    tavily_connected = bool(os.getenv("TAVILY_API_KEY"))
+    context_dev_connected = bool(os.getenv("CONTEXT_DEV_API_KEY"))
+
+    return {
+        "status": "updated",
+        "nebius_connected": nebius_connected,
+        "tavily_connected": tavily_connected,
+        "context_dev_connected": context_dev_connected,
+    }
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))

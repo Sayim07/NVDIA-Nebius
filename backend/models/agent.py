@@ -24,6 +24,7 @@ class AgentRunRequest(BaseModel):
     instruction: str = Field(..., description="User prompt or task instruction")
     workspace_id: str = Field(default="project_titan", description="Target workspace manifest ID")
     preset_name: Optional[str] = Field(default=None, description="Optional preset identifier")
+    workspace_context: Optional[str] = Field(default=None, description="Optional raw code/manifest text from selected folder")
 
 class AgentRunResponse(BaseModel):
     task_id: str = Field(..., description="Unique task execution ID")

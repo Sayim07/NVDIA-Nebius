@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HermesShield — DevSecOps Copilot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Custom Titlebar -->
+  <header class="titlebar">
+    <div class="titlebar-drag">
+      <div class="app-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <span class="app-title">HermesShield IDE — Zero-Trust DevSecOps Copilot</span>
+    </div>
+    <div class="system-status" id="system-status">
+      <span class="status-dot"></span>
+      <span id="backend-status-text">Connecting to Engine...</span>
+    </div>
+  </header>
+
+  <!-- App Body: Activity Bar + Sidebar + Editor Main -->
+  <div class="workspace-container">
+    
+    <!-- VS Code Style Activity Bar -->
+    <nav class="activity-bar">
+      <button class="activity-btn active" title="Explorer & Workflows" id="tab-explorer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+        </svg>
+      </button>
+      <button class="activity-btn" title="Safety Shield & Privacy" id="tab-safety">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </button>
+      <button class="activity-btn" title="API Keys & Engine Info" id="tab-info">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4"/>
+          <path d="M12 8h.01"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Sidebar Panel -->
+    <aside class="sidebar">
+      
+      <!-- ─── PANEL 1: EXPLORER & WORKFLOWS ─────────────────────────────── -->
+      <div id="panel-explorer" class="sidebar-panel active">
+        <!-- Section: Project Folder -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">PROJECT CODEBASE</div>
+          <div class="folder-picker-box">
+            <button class="btn-select-folder" id="btn-select-folder">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+              </svg>
+              <span>Select Local Folder...</span>
+            </button>
+            <div class="folder-path-display" id="folder-path-display">
+              <span class="folder-name-label" id="folder-name-label">Default: Project Titan</span>
+              <span class="folder-sub-label" id="folder-sub-label">Bundled sample manifest loaded</span>
+            </div>
+          </div>
+
+          <!-- Detected Files Container -->
+          <div class="detected-files-list" id="detected-files-list">
+            <span class="detected-badge">requirements.txt</span>
+            <span class="detected-badge">package.json</span>
+          </div>
+        </div>
+
+        <!-- Section: Standard Workflows (Algorithms) -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">WORKFLOW RECIPES</div>
+          <div class="recipe-options">
+            <label class="recipe-card active" data-preset="architecture_sync">
+              <input type="radio" name="recipe" value="architecture_sync" checked>
+              <div class="recipe-content">
+                <div class="recipe-title">1. Security & Bug Scan</div>
+                <div class="recipe-desc">Scans code dependencies against live CVE databases and creates an architecture briefing.</div>
+              </div>
+            </label>
+
+            <label class="recipe-card" data-preset="pr_review">
+              <input type="radio" name="recipe" value="pr_review">
+              <div class="recipe-content">
+                <div class="recipe-title">2. Pull Request Review</div>
+                <div class="recipe-desc">Checks authentication tokens and patch versions before merging code.</div>
+              </div>
+            </label>
+
+            <label class="recipe-card" data-preset="health_check">
+              <input type="radio" name="recipe" value="health_check">
+              <div class="recipe-content">
+                <div class="recipe-title">3. Health & Rollback Plan</div>
+                <div class="recipe-desc">Prepares step-by-step terminal instructions to safely rollback if an update fails.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Section: Custom Instructions -->
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CUSTOM INSTRUCTION (OPTIONAL)</div>
+          <textarea 
+            id="custom-instruction" 
+            class="custom-textarea" 
+            rows="3" 
+            placeholder="Type any specific question or check for your project..."
+          >Audit all dependencies, check for live CVE advisories, and construct a rollback plan.</textarea>
+        </div>
+
+        <!-- Run Action Button -->
+        <div class="sidebar-footer">
+          <button class="btn-run" id="btn-run-analysis">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span id="btn-run-text">Run Security Analysis</span>
+          </button>
+
+          <div class="privacy-guarantee">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Privacy Shield: ON (Zero data leaves your PC)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PANEL 2: SAFETY SHIELD & PRIVACY ───────────────────────────── -->
+      <div id="panel-safety" class="sidebar-panel">
+        <div class="sidebar-section">
+          <div class="sidebar-heading">ZERO-TRUST SAFETY SHIELD</div>
+          <div class="safety-card">
+            <div class="safety-status-header">
+              <span class="status-dot"></span>
+              <strong>Airlock Firewall: ARMED</strong>
+            </div>
+            <p class="safety-desc">
+              All search queries and prompts pass through offline regex and Nemotron Nano scrubbing before contacting public search or CVE APIs.
+            </p>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">PROTECTED ENTITY TYPES</div>
+          <ul class="protection-list">
+            <li><span class="check-icon">✓</span> API Keys & Secrets (AWS, OpenAI, Bearer)</li>
+            <li><span class="check-icon">✓</span> Corporate & Personal Emails (*@*.corp)</li>
+            <li><span class="check-icon">✓</span> Internal Hostnames (*.staging, *.internal)</li>
+            <li><span class="check-icon">✓</span> Database Credentials & IP Addresses</li>
+            <li><span class="check-icon">✓</span> Proprietary Source Code & Auth Headers</li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">NEMOCLAW SANDBOX</div>
+          <div class="safety-card">
+            <div class="safety-status-header">
+              <span class="status-dot"></span>
+              <strong>Execution Interceptor: &lt;15ms</strong>
+            </div>
+            <p class="safety-desc">
+              Subprocess execution runs inside a sandboxed boundary. Dangerous shell escapes or file modifications outside the workspace are blocked automatically.
+            </p>
+            <button class="btn-test-attack" id="btn-test-attack">
+              <span>Run Sandbox Security Test</span>
+            </button>
+            <div id="sandbox-test-result" class="sandbox-test-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PANEL 3: API KEYS & ENGINE SETTINGS ────────────────────────── -->
+      <div id="panel-info" class="sidebar-panel">
+        <div class="sidebar-section">
+          <div class="sidebar-heading">PERSONAL API KEYS (BYOK)</div>
+          <p class="settings-help">
+            Enter your keys below to run HermesShield without sharing or exposing credentials. Keys are saved <strong>only on your local machine</strong>.
+          </p>
+
+          <div class="key-field">
+            <div class="key-label-row">
+              <label for="key-nebius">NEBIUS AI STUDIO KEY</label>
+              <span id="badge-nebius-status" class="key-status-badge">Checking...</span>
+            </div>
+            <div class="key-input-wrapper">
+              <input type="password" id="key-nebius" class="key-input" placeholder="v1.CmQK... (Nebius Key)">
+              <button type="button" class="btn-toggle-eye" data-target="key-nebius" title="Show/Hide">👁</button>
+            </div>
+            <a href="https://studio.nebius.ai/" target="_blank" class="key-link">Get Nebius Key ↗</a>
+          </div>
+
+          <div class="key-field">
+            <div class="key-label-row">
+              <label for="key-tavily">TAVILY SEARCH KEY</label>
+              <span id="badge-tavily-status" class="key-status-badge">Checking...</span>
+            </div>
+            <div class="key-input-wrapper">
+              <input type="password" id="key-tavily" class="key-input" placeholder="tvly-dev-... (Tavily Key)">
+              <button type="button" class="btn-toggle-eye" data-target="key-tavily" title="Show/Hide">👁</button>
+            </div>
+            <a href="https://tavily.com/" target="_blank" class="key-link">Get Free Tavily Key ↗</a>
+          </div>
+
+          <div class="key-field">
+            <div class="key-label-row">
+              <label for="key-context">CONTEXT.DEV KEY (OPTIONAL)</label>
+              <span id="badge-context-status" class="key-status-badge">Optional</span>
+            </div>
+            <div class="key-input-wrapper">
+              <input type="password" id="key-context" class="key-input" placeholder="ctxt_secret_... (Optional)">
+              <button type="button" class="btn-toggle-eye" data-target="key-context" title="Show/Hide">👁</button>
+            </div>
+          </div>
+
+          <button class="btn-save-keys" id="btn-save-keys">
+            <span>Save & Connect API Keys</span>
+          </button>
+          <div id="keys-save-status" class="keys-save-status"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">CONNECTED AI MODELS</div>
+          <div class="model-meta-box">
+            <div class="model-row">
+              <span class="model-tier">Tier 1 Scrubber:</span>
+              <span class="model-name">Nemotron-3-Nano (30B)</span>
+            </div>
+            <div class="model-row">
+              <span class="model-tier">Tier 2 Synthesis:</span>
+              <span class="model-name">Nemotron-3-Super (120B)</span>
+            </div>
+            <div class="model-row">
+              <span class="model-tier">Tier 3 Compiler:</span>
+              <span class="model-name">Nemotron-3-Ultra (550B)</span>
+            </div>
+            <div class="model-row">
+              <span class="model-tier">Cloud Provider:</span>
+              <span class="model-name">Nebius AI Studio</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Main Editor / Report Area -->
+    <main class="main-editor">
+      <!-- Editor Tab Header -->
+      <div class="editor-tabs">
+        <div class="tab-item active" id="tab-report">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <span>security-briefing.md</span>
+        </div>
+        <div class="tab-actions">
+          <button class="action-btn" id="btn-copy-report" title="Copy to clipboard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <span id="copy-btn-label">Copy</span>
+          </button>
+          <button class="action-btn" id="btn-save-report" title="Save file to computer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <span>Save</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Human-Friendly Summary Banner -->
+      <div class="summary-banner" id="summary-banner">
+        <div class="summary-metric">
+          <span class="metric-label">STATUS</span>
+          <span class="metric-val text-ready" id="metric-status">Ready to Scan</span>
+        </div>
+        <div class="summary-metric">
+          <span class="metric-label">PRIVACY FILTER</span>
+          <span class="metric-val text-safe" id="metric-privacy">100% Scrubbed</span>
+        </div>
+        <div class="summary-metric">
+          <span class="metric-label">ENGINE</span>
+          <span class="metric-val" id="metric-model">NVIDIA Nemotron Live</span>
+        </div>
+        <div class="summary-metric">
+          <span class="metric-label">SEARCH</span>
+          <span class="metric-val" id="metric-search">Tavily CVE Scout</span>
+        </div>
+      </div>
+
+      <!-- Report Content Display -->
+      <div class="report-viewport" id="report-viewport">
+        <div class="placeholder-screen" id="placeholder-screen">
+          <div class="placeholder-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#52525b" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3>No Analysis Run Yet</h3>
+          <p>Select your project folder on the left, pick a workflow recipe, and click <strong>Run Security Analysis</strong> to generate a complete safety briefing.</p>
+        </div>
+
+        <div class="report-content" id="report-content" style="display: none;"></div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Bottom VS Code Status Bar -->
+  <footer class="statusbar">
+    <div class="statusbar-left">
+      <span class="status-item"><span class="status-indicator"></span> HermesShield Desktop</span>
+      <span class="status-item" id="status-workspace-name">Workspace: Project Titan</span>
+      <span class="status-item">Privacy Guard: Active</span>
+    </div>
+    <div class="statusbar-right">
+      <span class="status-item">NVIDIA Nemotron 3-Super</span>
+      <span class="status-item">Nebius Token Factory</span>
+      <span class="status-item">UTF-8</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

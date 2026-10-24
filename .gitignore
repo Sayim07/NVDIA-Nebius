@@ -3,6 +3,10 @@ ui.md
 
 # Environment variables & secrets
 .env
+*.env
+backend/.env
+desktop/.env
+frontend/.env*
 .env*.local
 *.pem
 *.key

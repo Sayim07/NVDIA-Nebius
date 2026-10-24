@@ -7,6 +7,5 @@
 - **Style:** Concise, authoritative, data-dense engineering memos. No fluff.
 
 ## Project Context
-- **Project Titan:** High-throughput microservice authentication and API gateway service built with Python FastAPI and Next.js 14. Hosted on internal staging environments.
-- **Apollo Service:** Real-time WebSocket streaming analytics collector.
+- **Active Workspace:** Dynamically audit whichever repository is selected by the user. Prioritize user-provided codebase packages over any default presets.
 - **Team Contacts:** Sayim (Lead Engineer - sayim@internal.corp).

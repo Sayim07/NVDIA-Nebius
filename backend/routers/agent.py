@@ -46,18 +46,17 @@ async def run_agent(req: AgentRunRequest):
     task_id = f"task_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
 
     # 1. Ingest workspace context
-    workspace_file = DEFAULT_WORKSPACE_DIR / f"{req.workspace_id}_manifest.json"
-    if not workspace_file.exists():
-        workspace_file = DEFAULT_WORKSPACE_DIR / "project_titan_manifest.json"
-
-    raw_workspace_text = workspace_file.read_text(encoding="utf-8") if workspace_file.exists() else "{}"
-
-    # 2. Ingest persistent memory
-    memory_text = DEFAULT_MEMORY_FILE.read_text(encoding="utf-8") if DEFAULT_MEMORY_FILE.exists() else ""
-
-    # 3. OpenShell security check on reading the workspace
-    read_cmd = f"cat {workspace_file.relative_to(_repo_root)}"
-    is_safe, rule, reason = validate_command(read_cmd)
+    if req.workspace_context and req.workspace_context.strip():
+        raw_workspace_text = req.workspace_context.strip()
+        read_cmd = f"inspect custom_workspace"
+        is_safe, rule, reason = True, "custom_user_codebase", "Explicit user directory loaded"
+    else:
+        workspace_file = DEFAULT_WORKSPACE_DIR / f"{req.workspace_id}_manifest.json"
+        if not workspace_file.exists():
+            workspace_file = DEFAULT_WORKSPACE_DIR / "project_titan_manifest.json"
+        raw_workspace_text = workspace_file.read_text(encoding="utf-8") if workspace_file.exists() else "{}"
+        read_cmd = f"cat {workspace_file.relative_to(_repo_root)}"
+        is_safe, rule, reason = validate_command(read_cmd)
     log_security_event(read_cmd, "ALLOWED" if is_safe else "BLOCKED", rule, reason)
 
     security_summary = AgentSecuritySummary(
@@ -73,7 +72,10 @@ async def run_agent(req: AgentRunRequest):
         ]
     )
 
-    # 4. Privacy-Preserving Tavily Airlock
+    # 2. Ingest persistent episodic memory
+    memory_text = DEFAULT_MEMORY_FILE.read_text(encoding="utf-8") if DEFAULT_MEMORY_FILE.exists() else ""
+
+    # 3. Privacy-Preserving Tavily Airlock
     diff = await sanitize_for_tavily(raw_workspace_text, req.instruction)
     airlock_res = search_tavily(diff.sanitized_query, diff)
 

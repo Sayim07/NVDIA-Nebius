@@ -1,0 +1,30 @@
+{
+  "name": "hermesshield-desktop",
+  "version": "1.0.0",
+  "description": "HermesShield Sovereign DevSecOps Agent — Desktop IDE",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.hermesshield.desktop",
+    "productName": "HermesShield IDE",
+    "win": {
+      "target": [
+        "portable",
+        "nsis"
+      ]
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "author": "HermesShield",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3"
+  }
+}

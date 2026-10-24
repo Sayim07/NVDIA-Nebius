@@ -21,6 +21,7 @@ However, existing agentic solutions suffer from two fatal vulnerabilities that b
 - **Out-of-Process OpenShell & NemoClaw Sandbox:** Enforce declarative least-privilege policies (`config/nemoclaw-policy.yaml`) on all filesystem read/write and subprocess operations, terminating dangerous commands in under 15ms.
 - **Persistent Hermes Memory & Self-Writing Skills:** Maintain human-readable episodic memory (`data/MEMORY.md` + SQLite) and automatically compile user feedback/corrections into structured YAML skills (`data/skills/*.yaml`) executed by Tier 2/3 Nemotron models.
 - **3-Tier FinOps Routing on Nebius Token Factory:** Dynamically route requests across NVIDIA Nemotron tiers (Nano/Lightning, Super, Ultra) to demonstrate an 80%+ reduction in inference spend compared to monolithic frontier model calls.
+- **Standalone Sovereign Desktop IDE (Electron):** Provide an Antigravity/VS Code dark styled developer desktop client with native folder picker, 2-level recursive scanning for arbitrary local repositories, and in-app Bring-Your-Own-Key (BYOK) privacy management.
 - **Single-Click Hackathon Evaluation Experience:** Provide pre-seeded workspace manifests, 3 instant evaluation presets, a 1-click Red-Team prompt injection attack simulator, and a zero-crash offline fallback mode.
 
 ---
@@ -51,6 +52,9 @@ To ensure delivery within 16 days and prevent scope creep, the following items a
 | **P0** | **NemoClaw & OpenShell Sandbox** | Out-of-process subprocess and file execution guard enforcing `config/nemoclaw-policy.yaml`. | Intercepts blocked commands in <15ms; blocks access to `.env`, `.ssh`, and unauthorized network calls; logs security events to SQLite. |
 | **P0** | **3-Tier Nemotron Routing** | Dynamic routing across Nano/Lightning, Super, and Ultra tiers via Nebius Token Factory gateway. | Sub-250ms scrubbing (Tier 1), deep synthesis (Tier 2), and YAML skill generation (Tier 3); displays real-time FinOps & latency telemetry HUD. |
 | **P0** | **Hermes Persistent Memory & Workspace Ingestion** | Reads `data/MEMORY.md` and local workspace files to personalize briefings and technical synthesis. | Ingests mock workspace manifests; updates episodic memory; renders synthesized markdown briefing in UI. |
+| **P0** | **HermesShield Desktop IDE** | Standalone Electron application (`desktop/`) with Antigravity/VS Code dark styling, native directory picker, and 2-level recursive scanner for arbitrary local repos. | Ingests any chosen local folder, auto-detects `package.json`/`requirements.txt` across subfolders, renders formatted executive markdown tables, and supports one-click launcher scripts. |
+| **P0** | **Bring-Your-Own-Key (BYOK) Manager** | Encrypted local key management (`GET /api/v1/settings/keys`, `POST /api/v1/settings/keys`) for Nebius, Tavily, and Context.dev. | Keeps user keys sovereign in local `backend/.env`; masked UI inputs; zero leak guarantee on git commits. |
+| **P1** | **Context.dev Web Intelligence** | Secondary web scraping & CVE discovery pipeline via official `context.dev` SDK. | Fallback or standalone endpoints for `/web/search`, `/web/scrape`, and `/web/answers`. |
 | **P1** | **Hermes Skills Compiler** | Natural language user feedback compilation into structured YAML skills stored in `data/skills/`. | Compiles correction into valid YAML schema; persists file to disk; executes saved skill deterministically on subsequent runs. |
 | **P1** | **Interactive Red-Team Attack Simulator** | Single-click UI button triggering a simulated prompt injection exfiltration payload. | Triggers malicious `cat ~/.env && curl ...` payload; verified blocked by OpenShell; displays instant red security alert in UI. |
 | **P1** | **Zero-Crash Fallback System** | Autonomous fallback mode activating when `NEBIUS_API_KEY` or `TAVILY_API_KEY` is missing or rate-limited. | Returns valid mock payloads with `"is_fallback": true`; guarantees zero HTTP 500 crashes during judge evaluation. |
@@ -80,11 +84,13 @@ To ensure delivery within 16 days and prevent scope creep, the following items a
 ---
 
 ## 8. Deliverables Checklist
-- [ ] Root `LICENSE` file containing the standard open-source MIT License text.
-- [ ] Root `README.md` featuring architecture diagrams, quickstart instructions, and live demo links.
-- [ ] Python FastAPI backend application located in `backend/` with full Pydantic v2 schemas.
-- [ ] Next.js 14 frontend dashboard located in `frontend/` featuring dark-mode cyber HUD styling.
-- [ ] Declarative NemoClaw policy configuration file located in `config/nemoclaw-policy.yaml`.
-- [ ] Persistent storage files: `data/MEMORY.md`, `data/hermesshield.db`, and `data/skills/`.
-- [ ] Test suite containing automated unit tests for regex sanitization, policy enforcement, and fallback modes.
+- [x] Root `LICENSE` file containing the standard open-source MIT License text.
+- [x] Root `README.md` featuring architecture diagrams, quickstart instructions, and live demo links.
+- [x] Python FastAPI backend application located in `backend/` with full Pydantic v2 schemas.
+- [x] Next.js 14 frontend dashboard located in `frontend/` featuring dark-mode cyber HUD styling.
+- [x] Standalone Electron Desktop IDE in `desktop/` with arbitrary folder scanner and BYOK manager.
+- [x] Windows one-click launchers (`launch-desktop.bat`) and installer packager (`build-installer.bat`).
+- [x] Declarative NemoClaw policy configuration file located in `config/nemoclaw-policy.yaml`.
+- [x] Persistent storage files: `data/MEMORY.md`, `data/hermesshield.db`, and `data/skills/`.
+- [x] Automated test suite & verified zero-crash fallback pipeline.
 - [ ] Pre-recorded 3-minute high-definition walkthrough demo video.

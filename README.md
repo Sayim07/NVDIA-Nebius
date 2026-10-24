@@ -17,53 +17,80 @@
 
 ---
 
-## 2. Architecture Overview
+## 2. Competitive Differentiation: Why HermesShield vs Cursor, Antigravity & Copilot
+
+While tools like **Cursor**, **Copilot**, and **Antigravity** focus purely on *code generation* (writing functions and autocompleting syntax), **HermesShield operates as a Zero-Trust AI Architect & Security Shield**:
+
+| Feature / Dimension | Cursor / Copilot / Standard AI IDEs | HermesShield Zero-Trust Executive IDE |
+| :--- | :--- | :--- |
+| **Web Search Privacy** | Raw code snippets, internal URLs, and repo names are sent directly to external search APIs. | **Two-Stage Privacy Airlock:** Regex scrubbing + NVIDIA Nemotron-3 Nano (Tier 1) extracts *only* abstract package keywords before searching Tavily/Context.dev. |
+| **Terminal / Agent Execution** | Unrestricted terminal access with risk of prompt injection executing malicious commands. | **OpenShell Deterministic Guard:** Whitelist of read-only commands; sub-15ms blocking of command chaining (`&&`, `|`), destructive actions (`rm`), and secret exfiltration. |
+| **Token Cost Economics** | Dispatches all queries to monolithic frontier models ($3–$15 / 1M tokens). | **Dynamic 3-Tier NVIDIA Router:** Tier 1 (Nano 30B) for scrubbing + Tier 2 (Super 120B) for synthesis. **Proven ~82% token cost reduction** with live FinOps telemetry. |
+| **Local Codebase Ingestion** | Often requires uploading codebase or indexing on third-party cloud servers. | **100% Sovereign Local Scanning:** Native OS folder picker scans local directories (with recursive subfolder detection) entirely on-device. |
+| **API Key Security (BYOK)** | Hardcoded keys or centralized account billing that can run up unexpected charges. | **Bring-Your-Own-Key (BYOK) Manager:** Encrypted local `.env` storage with masked UI inputs and zero-cost offline fallback protection. |
+| **Dependency Audits** | Blindly suggests upgrading packages without vulnerability rollback planning. | **Executive CVE Matrix + Mandatory Rollback Plan:** Detailed vulnerability tables cross-referenced with live Mitre advisories and automated rollback steps. |
+
+---
+
+## 3. Architecture Overview
 
 ```
-+---------------------------------------------------------------------------------+
-|                                 HermesShield UI                                 |
-|          (Next.js 14 + Tailwind CSS + GSAP 3D Tilt + Framer Motion + Lenis)     |
-|   [Executive Workspace] | [Tavily Airlock] | [NemoClaw HUD] | [Skill Studio]    |
-+----------------------------------------+----------------------------------------+
-                                         | HTTP / JSON (Port 8000)
-                                         v
-+---------------------------------------------------------------------------------+
-|                        FastAPI Agent Runtime (Python 3.11)                      |
-|                                                                                 |
-|  +-----------------------+  +----------------------+  +----------------------+  |
-|  |     Tavily Airlock    |  |    3-Tier Router     |  |   OpenShell Guard    |  |
-|  | (Regex + Tier 1 Scrub)|  | (Nebius Token Fact.) |  | (Policy Enforcement) |  |
-|  +-----------+-----------+  +----------+-----------+  +----------+-----------+  |
-+--------------|-------------------------|-------------------------|--------------+
-               |                         |                         |
-               v                         v                         v
-       +---------------+      +--------------------+      +-----------------+
-       | Tavily Search |      | Nebius Nemotron    |      | Sandboxed Local |
-       | & Extract API |      | Nano / Super /     |      | Workspace & Sub-|
-       | (Cached 24h)  |      | Ultra Inference    |      | process Runner  |
-       +---------------+      +--------------------+      +-----------------+
++----------------------------------------------------------------------------------------------------+
+|                                    HermesShield Client Interfaces                                  |
+|                                                                                                    |
+|    +------------------------------------------+    +------------------------------------------+    |
+|    |      HermesShield Desktop IDE (Electron) |    |     HermesShield Web Console (Next.js)   |    |
+|    | - Native Directory Picker (Arbitrary Repos)|  | - Executive Architecture Sync            |    |
+|    | - Antigravity / VS Code Dark Craft       |    | - Real-time FinOps Telemetry HUD         |    |
+|    | - Bring-Your-Own-Key (BYOK) Privacy Hub  |    | - Full Interactive Red-Team Sandbox HUD  |    |
+|    | - Live OpenShell Attack Defense Simulator|    | - Hermes Memory & Self-Writing Skills    |    |
+|    +--------------------+---------------------+    +--------------------+---------------------+    |
++-------------------------|-----------------------------------------------|--------------------------+
+                          | HTTP / REST (Port 8000)                       |
+                          +-----------------------+-----------------------+
+                                                  |
+                                                  v
++----------------------------------------------------------------------------------------------------+
+|                                FastAPI Agent Runtime (Python 3.11+)                                |
+|                                                                                                    |
+|  +---------------------------+  +---------------------------+  +--------------------------------+  |
+|  |   Privacy-Preserving      |  |    Dynamic 3-Tier Router  |  |    OpenShell Deterministic     |  |
+|  |     Tavily Airlock        |  |  (Nebius Token Factory)   |  |          Sandbox Guard         |  |
+|  |  (Regex + Nemotron Nano)  |  |  Nano 30B -> Super 120B   |  |  (Sub-15ms Policy Enforcement) |  |
+|  +-------------+-------------+  +-------------+-------------+  +---------------+----------------+  |
+|                |                              |                                 |                  |
+|                |                              |                                 |                  |
+|  +-------------+-------------+  +-------------+-------------+  +----------------+---------------+  |
+|  | Context.dev Web Pipeline  |  | FinOps Accounting Engine  |  | Local SQLite Caching & Memory  |  |
+|  | (Live Search & Scraping)  |  | (80%+ Cost Reduction Calc)|  | (tavily_cache, security_events)|  |
+|  +---------------------------+  +---------------------------+  +--------------------------------+  |
++----------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-## 3. Technology Stack
+## 4. Technology Stack
 
-- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion, GSAP (`@gsap/react`), Lenis smooth scrolling, `cmdk` (Global Command Palette), Lucide React.
-- **Backend:** Python 3.11+, FastAPI, Uvicorn, Pydantic v2, PyYAML, `openai` (`AsyncOpenAI`), `tavily-python`, SQLite3.
-- **AI Gateways:** Nebius Token Factory (`https://api.tokenfactory.nebius.com/v1`), Tavily Search & Extract API.
+- **Desktop IDE:** Electron, Node.js, HTML5/CSS3 (Antigravity/VS Code luxury dark palette), Native File System IPC Bridge, `electron-builder`.
+- **Web Console:** Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion, GSAP (`@gsap/react`), Lenis smooth scrolling, `cmdk` (Global Command Palette), Lucide React.
+- **Backend Runtime:** Python 3.11+, FastAPI, Uvicorn, Pydantic v2, PyYAML, `openai` (`AsyncOpenAI`), `tavily-python`, SQLite3.
+- **AI Gateways:** Nebius Token Factory (`https://api.tokenfactory.nebius.com/v1` featuring `nvidia/Nemotron-3-Nano-30B-A3B` and `nvidia/Nemotron-3-Super-120B-A12B`), Tavily Search & Extract API, Context.dev API (`context.dev` SDK).
 
 ---
 
-## 4. Quickstart Guide
+## 5. Quickstart & Installation Guide
 
-### 4.1 Prerequisites
-- Python 3.11+
-- Node.js 18+ (v20+ recommended)
-- Optional API keys: `NEBIUS_API_KEY` and `TAVILY_API_KEY` (system runs in offline simulation mode if omitted).
-
-### 4.2 Backend Setup
+### 5.1 Clone & Environment Setup
 ```bash
-# From repository root
+git clone https://github.com/Sayim07/NVDIA-Nebius.git
+cd NVDIA-Nebius
+```
+
+> [!NOTE]
+> All personal secrets are strictly ignored via `.gitignore`. You can inspect `backend/.env.example` for all configurable variables.
+
+### 5.2 Launching the Backend
+```bash
 cd backend
 python -m venv .venv
 # On Windows:
@@ -72,14 +99,27 @@ python -m venv .venv
 # source .venv/bin/activate
 
 pip install -r requirements.txt
-
-# Start backend service
-uvicorn main:app --reload --port 8000
+uvicorn backend.main:app --reload --port 8000
 ```
 
-### 4.3 Frontend Setup
+### 5.3 Launching the Desktop IDE (Recommended for Developers)
+The Desktop IDE provides native folder scanning for any arbitrary local repository and in-app Bring-Your-Own-Key configuration.
+
+**One-Click Launcher (Windows):**
+Double-click `launch-desktop.bat` in the repository root, or run:
 ```bash
-# In a new terminal from repository root
+.\launch-desktop.bat
+```
+
+**Packaging Standalone Executable:**
+To create an installer or portable executable (`HermesShield IDE.exe`):
+```bash
+.\build-installer.bat
+```
+The output executable is generated at `desktop/dist/win-unpacked/HermesShield IDE.exe`.
+
+### 5.4 Launching the Web Console
+```bash
 cd frontend
 npm install
 npm run dev
@@ -88,16 +128,15 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 5. Cloud Deployment Guide (Frontend: Vercel | Backend: Render)
+## 6. Cloud Deployment Guide (Frontend: Vercel | Backend: Render)
 
 Deploying the Next.js frontend to **Vercel** and the FastAPI backend to **Render** is the recommended production architecture:
 
-### 5.1 Backend Deployment on Render (FastAPI)
+### 6.1 Backend Deployment on Render (FastAPI)
 1. Fork or push this repository to GitHub.
 2. Sign in to [Render](https://dashboard.render.com).
 3. Click **New +** → **Blueprint** and select your repository (or choose **Web Service**).
    - Render automatically reads [`render.yaml`](./render.yaml).
-   - **Root Directory:** Repository root (`.`)
    - **Build Command:** `pip install -r backend/requirements.txt`
    - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
    - **Health Check Path:** `/health`
@@ -108,7 +147,7 @@ Deploying the Next.js frontend to **Vercel** and the FastAPI backend to **Render
    - `FRONTEND_URL`: `https://your-project.vercel.app` (optional, CORS allows all `*.vercel.app` automatically)
 5. Deploy the service and copy your public URL (e.g., `https://hermesshield-api.onrender.com`).
 
-### 5.2 Frontend Deployment on Vercel (Next.js 14)
+### 6.2 Frontend Deployment on Vercel (Next.js 14)
 1. Sign in to [Vercel](https://vercel.com) and click **Add New...** → **Project**.
 2. Select your repository.
 3. In the configuration screen:
@@ -120,53 +159,32 @@ Deploying the Next.js frontend to **Vercel** and the FastAPI backend to **Render
 
 ---
 
-## 6. Hackathon Evaluation Presets
+## 7. Hackathon Evaluation Presets & Workflows
 
+### Desktop IDE Workflows:
+1. **Choose Any Local Workspace:** Click *"Select Project Folder"* to browse to any local project (e.g., `Avnex`, `AgentX`, or any React/Python repo). The recursive scanner automatically indexes package manifests across subdirectories.
+2. **One-Click Recipe Cards:**
+   - **Architecture Sync:** Deep dependency analysis + live Mitre/CVE check.
+   - **PR Review:** Security verification before merging.
+   - **Deep Scout:** External threat scouting without secret leaks.
+3. **Safety Shield & Privacy Hub:** Live inspection of the Airlock redaction rules and interactive OpenShell sandbox defense simulator.
+4. **Bring Your Own Key (BYOK):** Seamlessly configure and test your own Nebius, Tavily, and Context.dev keys in-app.
 
-The dashboard provides 3 one-click evaluation presets in the **Executive Workspace** tab:
-1. **Architecture Sync & CVE Scan (Preset A):** Demonstrates local manifest ingestion, Tavily Airlock PII scrubbing, live Mitre/CVE discovery, and Tier 2 briefing generation.
-2. **PR Security Review & Dependency Audit (Preset B):** Audits dependency versions against live advisories.
-3. **Competitive Deep Web Scouting (Preset C):** Conducts web intelligence research with automatic company entity sanitization.
-
-### Red-Team Attack Simulation
-Navigate to the **OpenShell & NemoClaw Security HUD** tab and click **"Simulate Prompt Injection Attack"**. The OpenShell supervisor intercepts the malicious exfiltration command (`cat ~/.env && curl ...`) in <15ms, blocks access, and renders a real-time security alert banner.
-
----
-
-## 7. How to Edit the Site (For Non-Technical Teammates)
-
-All copy, external links, proof metrics, trust logos, quickstart steps, and roadmap items are centralized in a single configuration file:
-👉 **`frontend/src/content/content.ts`** (also mirrored at `frontend/content/content.ts`)
-
-You can edit this file directly without touching any React components, CSS, or backend logic:
-
-- **Change headline, pitch, or subtext:** Edit `content.hero.titleLead`, `content.hero.titleAccent`, or `content.hero.subtext`.
-- **Change links (GitHub, Devpost, Demo, Video):** Update the `content.links` object (`github`, `liveDemo`, `youtube`, `devpost`).
-- **Swap the YouTube walkthrough:** Change `content.video.youtubeId` or `content.links.youtube`.
-- **Update metrics:** Edit the numbers and captions in the `content.metrics` array.
-- **Update roadmap or builder feedback:** Edit `content.roadmap.futureItems` or `content.roadmap.hackathonFeedback`.
-
-### Running Locally
-1. Start the FastAPI backend:
-   ```bash
-   cd backend && uvicorn main:app --reload --port 8000
-   ```
-2. Start the Next.js frontend:
-   ```bash
-   cd frontend && npm run dev
-   ```
-3. Open `http://localhost:3000` in your browser. Any edits in `content.ts` update instantly via hot reload.
+### Web Console Workflows:
+1. **Executive Workspace:** Audits pre-defined manifests (Titan, Apollo) with side-by-side diff telemetry.
+2. **OpenShell & NemoClaw Security HUD:** Click *"Simulate Prompt Injection Attack"*; OpenShell intercepts the malicious exfiltration command in <15ms with full audit event logging.
+3. **Skill Studio:** Review and compile autonomous Hermes YAML skills compounding operational knowledge.
 
 ---
 
 ## 8. Project Documentation
-- [PRD.md](./brain/PRD.md) — Product Requirements Document
+- [PRD.md](./brain/PRD.md) — Product Requirements Document (Updated for Desktop IDE & BYOK)
 - [TRD.md](./brain/TRD.md) — Technical Requirements Document
 - [AppFlow.md](./brain/AppFlow.md) — System Architecture & Flows
 - [Design.md](./brain/Design.md) — UI/UX Specification & Anti-Slop System
 - [Schema.md](./brain/Schema.md) — File, Data, & API Contracts
 - [ImplementationPlan.md](./brain/ImplementationPlan.md) — Phased Execution Plan
-- [Tracker.md](./brain/Tracker.md) — Development Progress & Decisions
+- [Tracker.md](./brain/Tracker.md) — Development Progress & Status Board
 - [Rules.md](./brain/Rules.md) — AI Coding Rules & Constraints
 - [CHANGELOG.md](./CHANGELOG.md) — Detailed UI Redesign Progress
 

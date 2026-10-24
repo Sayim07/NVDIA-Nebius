@@ -370,7 +370,8 @@ CREATE TABLE IF NOT EXISTS telemetry_logs (
 {
   "instruction": "Prep technical briefing for 2 PM sync on Project Titan, check FastAPI & Next.js CVEs this week, draft agenda.",
   "workspace_id": "project_titan",
-  "preset_name": "architecture_sync"
+  "preset_name": "architecture_sync",
+  "workspace_context": "Project Titan manifest or arbitrary scanned local codebase content (optional)"
 }
 ```
 - **Response (200 OK):**
@@ -562,6 +563,53 @@ CREATE TABLE IF NOT EXISTS telemetry_logs (
 }
 ```
 
+### 5.9 Bring-Your-Own-Key (BYOK) Settings (`GET /api/v1/settings/keys` & `POST /api/v1/settings/keys`)
+
+#### Read Masked Status (`GET /api/v1/settings/keys`)
+- **Response (200 OK):**
+```json
+{
+  "nebius": {
+    "configured": true,
+    "masked": "sk-neb...a1b2"
+  },
+  "tavily": {
+    "configured": true,
+    "masked": "tvly-p...c3d4"
+  },
+  "context_dev": {
+    "configured": false,
+    "masked": ""
+  }
+}
+```
+
+#### Update Local Secrets (`POST /api/v1/settings/keys`)
+- **Request:**
+```json
+{
+  "nebius_key": "sk-neb-real-secret-key",
+  "tavily_key": "tvly-real-secret-key",
+  "context_dev_key": "ctx-optional-key"
+}
+```
+- **Response (200 OK):**
+```json
+{
+  "status": "success",
+  "message": "API keys updated and persisted to backend/.env",
+  "nebius_configured": true,
+  "tavily_configured": true,
+  "context_dev_configured": true
+}
+```
+
+### 5.10 Context.dev Web Intelligence Endpoints (`/api/v1/context/*`)
+- **Live Search (`POST /api/v1/context/search`):** Query web search results using `context.dev` SDK.
+- **GFM Scrape (`POST /api/v1/context/scrape`):** Extract main markdown content from target URLs.
+- **Direct Answers (`POST /api/v1/context/answers`):** Fast-mode research answers.
+- **Provider Status (`GET /api/v1/context/status`):** Check connection state.
+
 ---
 
-> **Notice:** No other endpoints/fields should be added without updating this section first.
+> **Notice:** All endpoints, contracts, and file schemas are maintained in strict synchronization across `README.md`, `TRD.md`, and `Schema.md`.
