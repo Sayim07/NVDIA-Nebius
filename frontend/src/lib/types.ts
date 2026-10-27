@@ -82,6 +82,7 @@ export interface AgentRunRequest {
   instruction: string;
   workspace_id: string;
   preset_name?: string | null;
+  workspace_context?: string | null;
 }
 
 export interface AgentRunResponse {

@@ -387,3 +387,32 @@ export async function triggerOvernightScout(): Promise<OvernightScoutResponse> {
     };
   }
 }
+
+export async function saveBackendApiKeys(keys: {
+  nebius_key?: string;
+  tavily_key?: string;
+  context_dev_key?: string;
+}): Promise<boolean> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/settings/keys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(keys),
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn('Could not sync keys to backend:', e);
+    return false;
+  }
+}
+
+export async function fetchBackendApiKeys(): Promise<any> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/settings/keys`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+

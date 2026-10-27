@@ -35,7 +35,7 @@ interface AppState {
   isFallback: boolean;
 
   // Actions
-  handleRunAgent: (instruction: string, workspaceId: string, presetName?: string) => Promise<void>;
+  handleRunAgent: (instruction: string, workspaceId: string, presetName?: string, workspaceContext?: string) => Promise<void>;
   handleSimulateAttack: () => Promise<AttackSimulationResponse>;
   handleSaveMemory: (newMarkdown: string) => Promise<void>;
   handleCompileSkill: (feedbackText: string) => Promise<void>;
@@ -86,10 +86,15 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  const handleRunAgent = useCallback(async (instruction: string, workspaceId: string, presetName?: string) => {
+  const handleRunAgent = useCallback(async (instruction: string, workspaceId: string, presetName?: string, workspaceContext?: string) => {
     setLoadingRun(true);
     try {
-      const res = await runAgent({ instruction, workspace_id: workspaceId, preset_name: presetName });
+      const res = await runAgent({
+        instruction,
+        workspace_id: workspaceId,
+        preset_name: presetName,
+        workspace_context: workspaceContext,
+      });
       setAgentResult(res);
       setTelemetry(res.finops);
       // Refresh security audit log after run
