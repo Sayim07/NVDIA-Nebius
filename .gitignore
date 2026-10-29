@@ -75,6 +75,8 @@ test_*.png
 *.jpg
 *.jpeg
 *.png
+images/
+capture_gallery_images.py
 
 # Generated PDFs & Demo Automation Scripts
 *.pdf

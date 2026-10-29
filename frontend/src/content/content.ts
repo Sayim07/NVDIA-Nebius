@@ -207,7 +207,7 @@ export const content: ContentConfig = {
   links: {
     github: 'https://github.com/Sayim07/NVDIA-Nebius',
     liveDemo: '#demo',
-    youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    youtube: 'https://www.youtube.com/watch?v=gfVYxTViN14',
     devpost: 'https://devpost.com',
   },
 
@@ -447,7 +447,7 @@ export const content: ContentConfig = {
     eyebrow: 'Video walkthrough',
     heading: 'See it in 3 minutes',
     caption: 'A quick tour of the privacy airlock, attack blocker and cost dashboard.',
-    youtubeId: 'dQw4w9WgXcQ', // TODO: Swap with live walkthrough URL
+    youtubeId: 'gfVYxTViN14',
   },
 
   techStack: {
@@ -561,7 +561,7 @@ export const content: ContentConfig = {
         links: [
           { label: 'GitHub Repository', href: 'https://github.com/Sayim07/NVDIA-Nebius' },
           { label: 'Live Demo', href: '#demo' },
-          { label: 'Video Walkthrough', href: 'https://www.youtube.com/watch?v=placeholder' },
+          { label: 'Video Walkthrough', href: 'https://www.youtube.com/watch?v=gfVYxTViN14' },
           { label: 'Documentation', href: 'https://github.com/Sayim07/NVDIA-Nebius#readme' },
         ],
       },

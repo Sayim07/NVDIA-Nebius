@@ -14,8 +14,8 @@ interface VideoModalProps {
 export function VideoModal({
   isOpen,
   onClose,
-  videoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  title = 'HermesShield Walkthrough',
+  videoUrl = 'https://www.youtube.com/embed/gfVYxTViN14',
+  title = 'HermesShield Hackathon Winning Demo',
 }: VideoModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
