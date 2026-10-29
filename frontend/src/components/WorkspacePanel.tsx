@@ -19,6 +19,9 @@ import {
   Sparkles,
   Info,
   FileText,
+  FolderOpen,
+  FolderTree,
+  CheckCircle2,
 } from 'lucide-react';
 import { AgentRunResponse } from '@/lib/types';
 import { TiltCard } from './ui/TiltCard';
@@ -98,6 +101,10 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
     )
   );
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [detectedManifests, setDetectedManifests] = useState<string[]>([]);
+  const [isScanningFolder, setIsScanningFolder] = useState(false);
+  const folderInputRef = React.useRef<HTMLInputElement | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
   // Quota & Modals state
   const [quota, setQuota] = useState<QuotaState>(() => getQuotaState());
@@ -151,18 +158,18 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
     );
   };
 
-  // Handle file upload for custom project
+  // Handle single file upload for custom project
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploadedFileName(file.name);
+    setDetectedManifests([file.name]);
     const reader = new FileReader();
     reader.onload = (event) => {
       const content = event.target?.result as string;
       if (content) {
         setCustomManifestText(content);
-        // If file is package.json, try to extract project name
         try {
           if (file.name.endsWith('.json')) {
             const parsed = JSON.parse(content);
@@ -174,6 +181,162 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
       }
     };
     reader.readAsText(file);
+  };
+
+  // Handle full folder / directory ingestion like in an IDE
+  const handleFolderUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
+
+    setIsScanningFolder(true);
+    try {
+      const files = Array.from(fileList);
+      const samplePath = files[0].webkitRelativePath || files[0].name;
+      const folderName = samplePath.split('/')[0] || 'Custom Repository';
+      setCustomProjectName(folderName);
+      setUploadedFileName(`📁 ${folderName} (${files.length} files scanned)`);
+
+      const manifests: { name: string; content: string }[] = [];
+      let detectedStack = '';
+
+      for (const file of files) {
+        const relPath = file.webkitRelativePath || file.name;
+        const lower = relPath.toLowerCase();
+
+        const isTarget =
+          lower.endsWith('package.json') ||
+          lower.endsWith('requirements.txt') ||
+          lower.endsWith('pyproject.toml') ||
+          lower.endsWith('cargo.toml') ||
+          lower.endsWith('go.mod') ||
+          lower.endsWith('render.yaml') ||
+          lower.endsWith('docker-compose.yml') ||
+          lower.endsWith('gemfile');
+
+        if (isTarget) {
+          try {
+            const text = await file.text();
+            manifests.push({ name: relPath, content: text.trim() });
+
+            if (lower.endsWith('package.json')) {
+              if (text.includes('next')) detectedStack = 'Next.js 14/15 + TypeScript';
+              else if (text.includes('react')) detectedStack = 'React';
+              else if (!detectedStack) detectedStack = 'Node.js';
+            } else if (lower.endsWith('requirements.txt') || lower.endsWith('pyproject.toml')) {
+              if (text.includes('fastapi')) detectedStack = detectedStack ? `${detectedStack} + FastAPI` : 'Python + FastAPI';
+              else if (text.includes('django')) detectedStack = detectedStack ? `${detectedStack} + Django` : 'Python + Django';
+              else if (!detectedStack) detectedStack = 'Python';
+            }
+          } catch (err) {
+            console.warn('Could not read manifest file:', relPath, err);
+          }
+        }
+      }
+
+      if (manifests.length > 0) {
+        const combined = manifests
+          .map((m) => `// ==========================================\n// MANIFEST: ${m.name}\n// ==========================================\n${m.content}`)
+          .join('\n\n');
+        setCustomManifestText(combined);
+        setDetectedManifests(manifests.map((m) => m.name));
+        if (detectedStack) setCustomStack(detectedStack);
+      } else {
+        const sample = files.slice(0, 30).map((f) => f.webkitRelativePath || f.name).join('\n');
+        setCustomManifestText(`// No package.json or requirements.txt found.\n// Ingested ${files.length} project files in ${folderName}:\n${sample}`);
+        setDetectedManifests([`${files.length} files scanned`]);
+        setCustomStack('Full-Stack Repository');
+      }
+
+      setInstruction(
+        `Audit all dependencies in ${folderName}, check for live CVE advisories across detected manifests, and construct an executive security briefing with a rollback plan.`
+      );
+    } finally {
+      setIsScanningFolder(false);
+    }
+  };
+
+  // Open OS native folder picker dialog
+  const triggerFolderPicker = async () => {
+    if (typeof window !== 'undefined' && 'showDirectoryPicker' in window) {
+      try {
+        // @ts-ignore
+        const dirHandle = await window.showDirectoryPicker();
+        setIsScanningFolder(true);
+        const folderName = dirHandle.name;
+        setCustomProjectName(folderName);
+
+        const manifests: { name: string; content: string }[] = [];
+        let detectedStack = '';
+        let fileCount = 0;
+
+        const scanDir = async (handle: any, currentPath: string, depth: number) => {
+          if (depth > 2) return;
+          for await (const entry of handle.values()) {
+            if (entry.kind === 'file') {
+              fileCount++;
+              const lower = entry.name.toLowerCase();
+              const relPath = currentPath ? `${currentPath}/${entry.name}` : entry.name;
+              if (
+                lower === 'package.json' ||
+                lower === 'requirements.txt' ||
+                lower === 'pyproject.toml' ||
+                lower === 'cargo.toml' ||
+                lower === 'go.mod' ||
+                lower === 'render.yaml' ||
+                lower === 'docker-compose.yml'
+              ) {
+                const file = await entry.getFile();
+                const text = await file.text();
+                manifests.push({ name: relPath, content: text.trim() });
+                if (lower === 'package.json') {
+                  if (text.includes('next')) detectedStack = 'Next.js 14/15 + TypeScript';
+                  else if (text.includes('react')) detectedStack = 'React';
+                  else if (!detectedStack) detectedStack = 'Node.js';
+                } else if (lower === 'requirements.txt' || lower === 'pyproject.toml') {
+                  if (text.includes('fastapi')) detectedStack = detectedStack ? `${detectedStack} + FastAPI` : 'Python + FastAPI';
+                  else if (!detectedStack) detectedStack = 'Python';
+                }
+              }
+            } else if (entry.kind === 'directory' && !['node_modules', '.git', '.next', '__pycache__', 'dist', 'build', '.venv'].includes(entry.name)) {
+              await scanDir(entry, currentPath ? `${currentPath}/${entry.name}` : entry.name, depth + 1);
+            }
+          }
+        }
+
+        await scanDir(dirHandle, '', 0);
+
+        setUploadedFileName(`📁 ${folderName} (${fileCount} files scanned)`);
+        if (manifests.length > 0) {
+          const combined = manifests
+            .map((m) => `// ==========================================\n// MANIFEST: ${m.name}\n// ==========================================\n${m.content}`)
+            .join('\n\n');
+          setCustomManifestText(combined);
+          setDetectedManifests(manifests.map((m) => m.name));
+          if (detectedStack) setCustomStack(detectedStack);
+        } else {
+          setCustomManifestText(`// Scanned ${fileCount} files in ${folderName}.\n// No manifest found.`);
+          setDetectedManifests([`${fileCount} files scanned`]);
+        }
+
+        setInstruction(
+          `Audit all dependencies in ${folderName}, check for live CVE advisories across detected manifests, and construct an executive security briefing with a rollback plan.`
+        );
+        setIsScanningFolder(false);
+        return;
+      } catch (e: any) {
+        if (e.name !== 'AbortError') {
+          console.warn('showDirectoryPicker failed, using input fallback:', e);
+        } else {
+          setIsScanningFolder(false);
+          return;
+        }
+      } finally {
+        setIsScanningFolder(false);
+      }
+    }
+
+    // Fallback: trigger directory input
+    folderInputRef.current?.click();
   };
 
   // Dispatch Run with Quota check & Custom context
@@ -214,9 +377,18 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
                 [ TARGET WORKSPACE ]
               </h3>
             </div>
-            <span className="text-[10px] font-mono text-slate-500">
-              LOCAL / CUSTOM REPO
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
+                  quota.isNebiusLimitHit
+                    ? 'bg-rose-950/60 border-rose-500/40 text-rose-300 animate-pulse'
+                    : 'bg-emerald-950/40 border-emerald-500/30 text-emerald-400'
+                }`}
+                title="Shared Nebius Nemotron evaluation credit pool"
+              >
+                {quota.hasCustomKey ? 'BYOK: UNLIMITED' : `Nebius Credit: $${quota.nebiusSpendUsd.toFixed(2)} / $5.00`}
+              </span>
+            </div>
           </div>
 
           {/* 3 Workspace Selector Buttons */}
@@ -296,17 +468,37 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
                 </div>
               </div>
 
-              {/* Upload file or paste dependencies */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
+              {/* Dual Ingestion: Full Folder Selection OR Single File Upload */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between mb-0.5">
                   <label className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
-                    <FileText className="w-3 h-3 text-cyan-400" />
-                    DEPENDENCY MANIFEST (package.json / requirements.txt)
+                    <FolderTree className="w-3 h-3 text-cyan-400" />
+                    SELECT CODEBASE (LOCAL FOLDER OR MANIFEST)
                   </label>
-                  <label className="text-[10px] text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1 font-mono">
-                    <Upload className="w-3 h-3" />
-                    <span>{uploadedFileName ? `Re-upload (${uploadedFileName})` : 'Upload File'}</span>
+                  {isScanningFolder && (
+                    <span className="text-[10px] font-mono text-cyan-400 animate-pulse">
+                      Scanning folder...
+                    </span>
+                  )}
+                </div>
+
+                {/* Primary Button: Select Entire Folder (Like in IDE) */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={triggerFolderPicker}
+                    disabled={isScanningFolder}
+                    className="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-cyan-500/40 bg-cyan-950/30 hover:bg-cyan-950/60 hover:border-cyan-400 text-cyan-300 text-xs font-mono font-semibold transition-all shadow-sm group cursor-pointer"
+                  >
+                    <FolderOpen className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                    <span>Select Entire Folder</span>
+                  </button>
+
+                  <label className="flex items-center justify-center gap-2 p-2.5 rounded-lg border border-slate-800 bg-slate-900/80 hover:bg-slate-900 hover:border-slate-700 text-slate-300 text-xs font-mono cursor-pointer transition-all">
+                    <Upload className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Upload Single File</span>
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept=".json,.txt,.toml,.yaml,.yml"
                       onChange={handleFileUpload}
@@ -314,6 +506,37 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
                     />
                   </label>
                 </div>
+
+                {/* Hidden input for webkitdirectory folder upload */}
+                <input
+                  ref={folderInputRef}
+                  type="file"
+                  // @ts-ignore
+                  webkitdirectory=""
+                  directory=""
+                  multiple
+                  onChange={handleFolderUpload}
+                  className="hidden"
+                />
+
+                {/* Detected Manifests Badges */}
+                {detectedManifests.length > 0 && (
+                  <div className="p-2 rounded bg-slate-900/90 border border-emerald-500/30 flex flex-wrap items-center gap-1.5 animate-in fade-in-0">
+                    <span className="text-[9.5px] font-mono text-emerald-400 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                      Detected Manifests:
+                    </span>
+                    {detectedManifests.map((name, i) => (
+                      <span
+                        key={i}
+                        className="px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-[9px] font-mono text-emerald-300"
+                      >
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
                 <textarea
                   value={customManifestText}
                   onChange={(e) => setCustomManifestText(e.target.value)}

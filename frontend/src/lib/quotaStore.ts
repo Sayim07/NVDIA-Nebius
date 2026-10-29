@@ -13,16 +13,21 @@ export interface QuotaState {
   isAdmin: boolean;
   hasCustomKey: boolean;
   customKeys: CustomApiKeys;
+  nebiusSpendUsd: number;
+  maxNebiusSpendUsd: number;
+  isNebiusLimitHit: boolean;
 }
 
 const STORAGE_KEYS = {
   RUNS_COUNT: 'hermesshield_runs_count',
   ADMIN_UNLOCKED: 'hermesshield_admin_unlocked',
   CUSTOM_KEYS: 'hermesshield_custom_keys',
+  NEBIUS_SPEND: 'hermesshield_nebius_spend_usd',
 };
 
 const MASTER_ADMIN_PASSCODE = 'hermes2026';
-const MAX_FREE_RUNS = 3;
+export const MAX_NEBIUS_SPEND_USD = 5.00;
+const MAX_FREE_RUNS = 25; // Generous trial runs within $5.00 limit
 
 /**
  * Read current quota, BYOK, and Admin state from localStorage.
@@ -35,6 +40,9 @@ export function getQuotaState(): QuotaState {
       isAdmin: false,
       hasCustomKey: false,
       customKeys: { nebiusKey: '', tavilyKey: '', contextDevKey: '' },
+      nebiusSpendUsd: 0,
+      maxNebiusSpendUsd: MAX_NEBIUS_SPEND_USD,
+      isNebiusLimitHit: false,
     };
   }
 
@@ -48,12 +56,19 @@ export function getQuotaState(): QuotaState {
 
     const hasCustomKey = Boolean(customKeys.nebiusKey && customKeys.nebiusKey.trim().length > 5);
 
+    const rawSpend = parseFloat(localStorage.getItem(STORAGE_KEYS.NEBIUS_SPEND) || '0.00');
+    const nebiusSpendUsd = isNaN(rawSpend) ? 0 : rawSpend;
+    const isNebiusLimitHit = !hasCustomKey && !isAdmin && nebiusSpendUsd >= MAX_NEBIUS_SPEND_USD;
+
     return {
       runsUsed: isNaN(runsUsed) ? 0 : runsUsed,
       maxFreeRuns: MAX_FREE_RUNS,
       isAdmin,
       hasCustomKey,
       customKeys,
+      nebiusSpendUsd,
+      maxNebiusSpendUsd: MAX_NEBIUS_SPEND_USD,
+      isNebiusLimitHit,
     };
   } catch (e) {
     console.warn('Error reading quota state from localStorage:', e);
@@ -63,43 +78,62 @@ export function getQuotaState(): QuotaState {
       isAdmin: false,
       hasCustomKey: false,
       customKeys: { nebiusKey: '', tavilyKey: '', contextDevKey: '' },
+      nebiusSpendUsd: 0,
+      maxNebiusSpendUsd: MAX_NEBIUS_SPEND_USD,
+      isNebiusLimitHit: false,
     };
   }
 }
 
 /**
- * Increment runs used if not in admin or custom key mode.
+ * Increment runs and track Nebius spend.
  */
-export function incrementRunsUsed(): number {
+export function recordRunUsage(costUsd: number = 0.0018): number {
   if (typeof window === 'undefined') return 0;
   const state = getQuotaState();
   if (state.isAdmin || state.hasCustomKey) {
-    return state.runsUsed; // Do not consume free quota in admin/BYOK mode
+    return state.runsUsed; // Unlimited in BYOK or Admin mode
   }
 
-  const next = state.runsUsed + 1;
+  const nextCount = state.runsUsed + 1;
+  const nextSpend = Math.min(MAX_NEBIUS_SPEND_USD, Number((state.nebiusSpendUsd + costUsd).toFixed(4)));
+
   try {
-    localStorage.setItem(STORAGE_KEYS.RUNS_COUNT, String(next));
+    localStorage.setItem(STORAGE_KEYS.RUNS_COUNT, String(nextCount));
+    localStorage.setItem(STORAGE_KEYS.NEBIUS_SPEND, String(nextSpend));
     window.dispatchEvent(new Event('hermesshield-quota-changed'));
   } catch (e) {
     console.warn('Failed to persist run count:', e);
   }
-  return next;
+  return nextCount;
+}
+
+export function incrementRunsUsed(): number {
+  return recordRunUsage(0.0018);
 }
 
 /**
  * Check if the user is permitted to trigger a live run.
  */
-export function canExecuteRun(): { allowed: boolean; remainingFree: number } {
+export function canExecuteRun(): {
+  allowed: boolean;
+  remainingFree: number;
+  remainingDollars: number;
+  reason?: 'limit_reached' | null;
+} {
   const state = getQuotaState();
   if (state.isAdmin || state.hasCustomKey) {
-    return { allowed: true, remainingFree: Infinity };
+    return { allowed: true, remainingFree: Infinity, remainingDollars: Infinity };
   }
 
-  const remaining = Math.max(0, state.maxFreeRuns - state.runsUsed);
+  const remainingDollars = Math.max(0, Number((MAX_NEBIUS_SPEND_USD - state.nebiusSpendUsd).toFixed(4)));
+  const allowed = remainingDollars > 0 && !state.isNebiusLimitHit;
+
   return {
-    allowed: remaining > 0,
-    remainingFree: remaining,
+    allowed,
+    remainingFree: Math.ceil(remainingDollars / 0.0018),
+    remainingDollars,
+    reason: allowed ? null : 'limit_reached',
   };
 }
 
@@ -139,23 +173,15 @@ export function saveCustomApiKeys(keys: CustomApiKeys): void {
 }
 
 /**
- * Clear custom keys.
+ * Reset Nebius evaluation spend (for testing or reset).
  */
-export function clearCustomApiKeys(): void {
+export function resetNebiusSpend(): void {
   if (typeof window === 'undefined') return;
-  try {
-    localStorage.removeItem(STORAGE_KEYS.CUSTOM_KEYS);
-    window.dispatchEvent(new Event('hermesshield-quota-changed'));
-  } catch (e) {
-    console.warn('Failed to clear custom keys:', e);
-  }
+  localStorage.removeItem(STORAGE_KEYS.NEBIUS_SPEND);
+  localStorage.removeItem(STORAGE_KEYS.RUNS_COUNT);
+  window.dispatchEvent(new Event('hermesshield-quota-changed'));
 }
 
-/**
- * Reset free runs count (admin convenience).
- */
 export function resetFreeRuns(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEYS.RUNS_COUNT, '0');
-  window.dispatchEvent(new Event('hermesshield-quota-changed'));
+  resetNebiusSpend();
 }

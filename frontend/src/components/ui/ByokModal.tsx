@@ -104,12 +104,12 @@ export const ByokModal: React.FC<ByokModalProps> = ({
               <div>
                 <Dialog.Title className="text-base font-semibold text-white">
                   {reason === 'limit_reached'
-                    ? 'Free Demo Limit Reached (3/3)'
+                    ? 'Nebius $5.00 Evaluation Limit Reached'
                     : 'Configure Personal API Keys'}
                 </Dialog.Title>
-                <Dialog.Description className="text-xs text-slate-400 mt-0.5">
+                <Dialog.Description className="text-xs text-slate-400 mt-0.5 leading-relaxed">
                   {reason === 'limit_reached'
-                    ? "You've used all 3 free server-sponsored scans. Enter your own keys for unlimited web scans."
+                    ? 'The shared $5.00 Nebius evaluation credit has been fully consumed. Limit khatam! Please enter your own personal Nebius API key below to continue unlimited AI runs.'
                     : 'Bring Your Own Key (BYOK) for sovereign, unmetered AI scans.'}
                 </Dialog.Description>
               </div>

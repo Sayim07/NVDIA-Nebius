@@ -112,11 +112,52 @@ document.querySelectorAll('.recipe-card').forEach((card) => {
   });
 });
 
+// 3.5 Nebius $5.00 Evaluation Credit Pool Management
+function updateNebiusCreditDisplay() {
+  const nebiusEvalPill = document.getElementById('nebius-eval-pill');
+  if (!nebiusEvalPill) return;
+
+  const hasCustom = Boolean(localStorage.getItem('hermes_custom_nebius_key') || (keyNebius && keyNebius.value.trim()));
+  if (hasCustom) {
+    nebiusEvalPill.textContent = 'Nebius: BYOK Unlimited';
+    nebiusEvalPill.style.color = '#38bdf8';
+    return;
+  }
+
+  const spent = parseFloat(localStorage.getItem('hermes_nebius_spend_usd') || '0.00');
+  const remaining = Math.max(0, 5.00 - spent);
+  if (remaining <= 0) {
+    nebiusEvalPill.textContent = 'Nebius Limit: $5.00 Hit (Enter Key)';
+    nebiusEvalPill.style.color = '#ef4444';
+  } else {
+    nebiusEvalPill.textContent = `Nebius Eval: $${spent.toFixed(2)} / $5.00`;
+    nebiusEvalPill.style.color = '#10b981';
+  }
+}
+
 // 4. Run Analysis
 btnRun.addEventListener('click', async () => {
   const prompt = customInstruction.value.trim();
   if (!prompt) {
     alert('Please enter an instruction or choose a workflow recipe.');
+    return;
+  }
+
+  // Check $5.00 Nebius Evaluation Limit
+  const hasCustom = Boolean(localStorage.getItem('hermes_custom_nebius_key') || (keyNebius && keyNebius.value.trim()));
+  const currentSpent = parseFloat(localStorage.getItem('hermes_nebius_spend_usd') || '0.00');
+  if (!hasCustom && currentSpent >= 5.00) {
+    alert(
+      "⚠️ NEBIUS $5.00 EVALUATION CREDIT LIMIT REACHED!\n\n" +
+      "The shared $5.00 evaluation credit has been fully consumed. Limit khatam!\n\n" +
+      "Please enter your own personal Nebius API key in Settings (BYOK) to continue running live AI models."
+    );
+    const settingsBtn = document.querySelectorAll('.activity-btn')[2];
+    if (settingsBtn) settingsBtn.click();
+    if (keyNebius) {
+      keyNebius.focus();
+      keyNebius.style.borderColor = '#ef4444';
+    }
     return;
   }
 
@@ -156,6 +197,14 @@ btnRun.addEventListener('click', async () => {
 
     const data = await res.json();
     currentBriefingMarkdown = data.briefing_markdown;
+
+    // Record Nebius usage
+    if (!hasCustom) {
+      const runCost = data.finops?.total_cost_usd || 0.0018;
+      const nextSpent = Math.min(5.00, Number((currentSpent + runCost).toFixed(4)));
+      localStorage.setItem('hermes_nebius_spend_usd', String(nextSpent));
+      updateNebiusCreditDisplay();
+    }
 
     // Render report
     placeholderScreen.style.display = 'none';
@@ -448,11 +497,15 @@ btnSaveKeys.addEventListener('click', async () => {
 
     if (res.ok) {
       keysSaveStatus.innerHTML = '<span style="color:#10b981;">✓ Keys saved locally to .env and activated!</span>';
+      if (payload.nebius_api_key) {
+        localStorage.setItem('hermes_custom_nebius_key', payload.nebius_api_key);
+      }
       keyNebius.value = '';
       keyTavily.value = '';
       keyContext.value = '';
       await checkHealth();
       await loadSettingsKeys();
+      updateNebiusCreditDisplay();
     } else {
       keysSaveStatus.innerHTML = '<span style="color:#ef4444;">Failed to save keys to server.</span>';
     }
@@ -467,4 +520,5 @@ btnSaveKeys.addEventListener('click', async () => {
 // Initial probe
 checkHealth();
 loadSettingsKeys();
+updateNebiusCreditDisplay();
 setInterval(checkHealth, 5000);
