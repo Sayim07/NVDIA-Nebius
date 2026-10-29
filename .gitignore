@@ -59,6 +59,32 @@ yarn-error.log*
 *.db-journal
 *.sqlite-journal
 
+# Video, Audio & Demo Media Assets
+*.mp4
+*.webm
+*.mov
+*.avi
+*.mp3
+*.wav
+*.aac
+clips/
+recordings/
+recordings_sync/
+voiceovers/
+test_*.png
+
+# Generated PDFs & Demo Automation Scripts
+*.pdf
+build_clip_based_video.py
+generate_video_script_pdf.py
+generate_voiceover.py
+mux_final_video.py
+record_demo_walkthrough.py
+record_synchronized_demo.py
+
+# Runtime Generated Briefings & Logs
+data/briefings/
+
 # OS files
 .DS_Store
 Thumbs.db
