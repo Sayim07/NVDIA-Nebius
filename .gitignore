@@ -67,6 +67,7 @@ yarn-error.log*
 *.mp3
 *.wav
 *.aac
+*.zip
 clips/
 recordings/
 recordings_sync/
@@ -77,6 +78,7 @@ test_*.png
 *.png
 images/
 capture_gallery_images.py
+make_submission_zip.py
 
 # Generated PDFs & Demo Automation Scripts
 *.pdf
