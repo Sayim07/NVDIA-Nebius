@@ -55,6 +55,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+from starlette.middleware.base import BaseHTTPMiddleware
+import re
+
+class NormalizePathMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        if "//" in request.scope.get("path", ""):
+            request.scope["path"] = re.sub(r"/+", "/", request.scope["path"])
+        return await call_next(request)
+
+app.add_middleware(NormalizePathMiddleware)
+
 # CORS configuration for Next.js frontend (Local, Vercel, and Custom Domains)
 frontend_url = os.getenv("FRONTEND_URL")
 allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]

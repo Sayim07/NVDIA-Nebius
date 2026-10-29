@@ -13,7 +13,8 @@ import {
   OvernightScoutResponse,
 } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const RAW_API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = RAW_API_BASE.replace(/\/+$/, '');
 
 // Built-in fallback fixtures for instant, zero-crash standalone Vercel preview
 const FALLBACK_HEALTH: HealthStatus = {
