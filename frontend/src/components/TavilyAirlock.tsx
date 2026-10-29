@@ -1,3 +1,4 @@
+// frontend/src/components/TavilyAirlock.tsx
 'use client';
 
 import React from 'react';
@@ -10,9 +11,13 @@ import {
   Clock,
   Sparkles,
   Lock,
+  Globe,
+  CheckCircle2,
 } from 'lucide-react';
 import { AirlockResult } from '@/lib/types';
-import { TiltCard } from './ui/TiltCard';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { BorderBeam } from '@/components/ui/BorderBeam';
 
 interface TavilyAirlockProps {
   airlock: AirlockResult | null;
@@ -55,158 +60,184 @@ export const TavilyAirlock: React.FC<TavilyAirlockProps> = ({ airlock }) => {
   const isCached = airlock?.is_cached ?? false;
 
   return (
-    <div className="space-y-6">
-      {/* Top Banner: The $3,000 Tavily Innovation Hook */}
-      <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center space-x-3.5">
-            <div className="p-2.5 rounded bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 shrink-0">
-              <ShieldCheck className="w-5 h-5" />
+    <div className="space-y-6 animate-in fade-in-50 duration-300">
+      {/* Top Banner: The Tavily Privacy Airlock System */}
+      <Card className="relative overflow-hidden border-cyan-500/30 bg-gradient-to-r from-surface via-surface to-cyan-950/20 p-6 shadow-card">
+        <BorderBeam
+          size={240}
+          duration={12}
+          colorFrom="#06b6d4"
+          colorTo="#10b981"
+          borderWidth={1.5}
+        />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative z-10">
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="p-3 rounded-xl bg-cyan-950/70 border border-cyan-500/40 text-cyan-400 shrink-0">
+              <ShieldCheck className="w-6 h-6" />
             </div>
-            <div>
+            <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-mono tracking-wider text-cyan-400">
-                  [ 02 // PRIVACY AIRLOCK ]
-                </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800/60 font-semibold">
-                  TARGET: $3,000 BEST USE OF TAVILY
-                </span>
+                <Badge variant="cyan">02 // PRIVACY AIRLOCK</Badge>
+                <Badge variant="outline">ZERO-PII WEB SCOUT</Badge>
               </div>
-              <h2 className="text-base font-bold text-white tracking-tight uppercase mt-0.5">
-                Privacy-Preserving Tavily Airlock <span className="font-editorial italic font-normal text-cyan-400 lowercase text-lg tracking-normal">pipeline</span>
+              <h2 className="text-lg font-heading font-bold text-text tracking-tight uppercase">
+                Privacy-Preserving Tavily Airlock
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5 max-w-2xl leading-relaxed">
-                Deterministic regex firewalls + Tier 1 Nemotron Nano scrub proprietary PII, corporate domains, and API tokens before web dispatch.
+              <p className="text-xs text-muted max-w-2xl leading-relaxed">
+                Two-stage sanitization (Regex Firewall + Tier 1 Nemotron Nano) scrubs proprietary tokens,
+                developer identities, and corporate hostnames before any query touches the public internet.
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs font-mono self-start sm:self-center shrink-0">
-            <div className="flex items-center px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
-              <Clock className="w-3 h-3 text-cyan-400 mr-1.5" />
-              <span>[ {diff.scrub_latency_ms}ms ]</span>
-            </div>
-            <div className="flex items-center px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-300">
-              <Database className="w-3 h-3 text-emerald-400 mr-1.5" />
-              <span>[ {isCached ? '24h CACHE HIT' : 'LIVE DISPATCH'} ]</span>
-            </div>
+          <div className="flex items-center gap-2 text-xs font-mono self-start sm:self-center shrink-0">
+            <Badge variant="secondary" className="gap-1.5 py-1">
+              <Clock className="w-3 h-3 text-cyan-400" />
+              <span>{diff.scrub_latency_ms}ms</span>
+            </Badge>
+            <Badge variant={isCached ? 'emerald' : 'cyan'} className="gap-1.5 py-1">
+              <Database className="w-3 h-3" />
+              <span>{isCached ? '24h CACHE HIT' : 'LIVE DISPATCH'}</span>
+            </Badge>
           </div>
         </div>
-      </TiltCard>
+      </Card>
 
       {/* Side-by-Side Visual Diff Card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Raw Internal Context */}
-        <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
-            <div className="flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-rose-400" />
-              <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200">
-                [ RAW INTERNAL CONTEXT // PRE-AIRLOCK ]
-              </h3>
+        <Card className="flex flex-col justify-between">
+          <CardHeader className="pb-3 border-b border-border/80">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-rose-400">
+                <Lock className="w-4 h-4 text-rose-400" />
+                <span>Raw Context (Pre-Airlock)</span>
+              </CardTitle>
+              <Badge variant="rose" className="gap-1 text-[10px]">
+                <ShieldAlert className="w-3 h-3" />
+                PII DETECTED
+              </Badge>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950/80 text-rose-300 border border-rose-800/60 flex items-center gap-1 font-semibold">
-              <ShieldAlert className="w-3 h-3" />
-              PROPRIETARY PII DETECTED
-            </span>
-          </div>
+            <CardDescription>
+              Local workspace context containing sensitive credentials and internal identifiers
+            </CardDescription>
+          </CardHeader>
 
-          <div className="p-4 rounded bg-slate-950 border border-slate-800/90 text-xs text-slate-300 font-mono leading-relaxed min-h-[140px]">
-            {diff.raw_context}
-          </div>
+          <CardContent className="pt-4 flex-1">
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-mono leading-relaxed min-h-[140px] select-all">
+              {diff.raw_context}
+            </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-800/80">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2">
-              [ SCRUBBED ENTITIES // COUNT: {diff.scrubbed_entities.length} ]
+            <div className="mt-4 pt-3 border-t border-border/60">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-2">
+                Redacted Entities ({diff.scrubbed_entities.length})
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {diff.scrubbed_entities.map((item, idx) => (
+                  <Badge key={idx} variant="rose" className="text-[10px]">
+                    [REDACTED: {item}]
+                  </Badge>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {diff.scrubbed_entities.map((item, idx) => (
-                <span
-                  key={idx}
-                  className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950/60 text-rose-300 border border-rose-800/50"
-                >
-                  [REDACTED: {item}]
-                </span>
-              ))}
-            </div>
-          </div>
-        </TiltCard>
+          </CardContent>
+        </Card>
 
         {/* Right Column: Sanitized Web Query */}
-        <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200">
-                [ SANITIZED TAVILY QUERY // DISPATCHED ]
-              </h3>
+        <Card className="relative overflow-hidden flex flex-col justify-between shadow-card border-emerald-500/30">
+          <BorderBeam
+            size={200}
+            duration={10}
+            colorFrom="#10b981"
+            colorTo="#06b6d4"
+            borderWidth={1.5}
+          />
+          <CardHeader className="pb-3 border-b border-border/80 relative z-10">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-emerald-400">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                <span>Sanitized Query (Dispatched)</span>
+              </CardTitle>
+              <Badge variant="emerald" className="gap-1 text-[10px]">
+                <ShieldCheck className="w-3 h-3" />
+                AIRLOCK APPROVED
+              </Badge>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 flex items-center gap-1 font-semibold">
-              <ShieldCheck className="w-3 h-3" />
-              100% ZERO-TRUST APPROVED
-            </span>
-          </div>
+            <CardDescription>
+              Abstract technical packages & version tokens dispatched to Tavily & Context.dev
+            </CardDescription>
+          </CardHeader>
 
-          <div className="p-4 rounded bg-slate-950 border border-slate-800/90 text-xs text-emerald-300 font-mono leading-relaxed min-h-[140px]">
-            {diff.sanitized_query}
-          </div>
+          <CardContent className="pt-4 flex-1">
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-emerald-400 font-mono leading-relaxed min-h-[140px] select-all">
+              {diff.sanitized_query}
+            </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
-            <span>[ QUERY LENGTH: {diff.sanitized_query.length} CHARS ]</span>
-            <span className="text-emerald-400">[ TAVILY DEPTH: BASIC (1 CREDIT) ]</span>
-          </div>
-        </TiltCard>
+            <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-[11px] font-mono text-muted">
+              <span>QUERY LENGTH: {diff.sanitized_query.length} CHARS</span>
+              <span className="text-emerald-400">TAVILY DEPTH: BASIC (1 CREDIT)</span>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Discovered CVE Advisories Feed */}
-      <TiltCard className="p-5 bg-slate-900/90 border border-slate-800">
-        <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
-          <h3 className="text-xs font-mono uppercase tracking-wider text-slate-200 flex items-center gap-2">
-            <span>[ DISCOVERED INTELLIGENCE & EXTRACTED ADVISORIES // {sources.length} ]</span>
-          </h3>
-          <span className="text-[10px] font-mono text-slate-500">
-            [ CACHED 24H: hermesshield.db ]
-          </span>
-        </div>
+      <Card>
+        <CardHeader className="pb-3 border-b border-border/80">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider">
+              <Globe className="w-4 h-4 text-cyan-400" />
+              <span>Discovered Web Advisories & CVE Intelligence ({sources.length})</span>
+            </CardTitle>
+            <Badge variant="secondary" className="text-[10px]">
+              CACHED 24H IN SQLITE
+            </Badge>
+          </div>
+          <CardDescription>
+            Live security advisories retrieved from Mitre and national vulnerability databases
+          </CardDescription>
+        </CardHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {sources.map((src, i) => (
-            <div
-              key={i}
-              className="p-4 rounded bg-slate-950 border border-slate-800/80 hover:border-slate-700 transition-all flex flex-col justify-between space-y-3"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="text-xs font-bold text-slate-100 uppercase tracking-tight leading-snug">
-                    {src.title}
-                  </h4>
-                  {src.cve_id && (
-                    <span className="shrink-0 px-2 py-0.5 rounded text-[10px] font-mono bg-rose-950 text-rose-300 border border-rose-800/50 font-bold">
-                      [ {src.cve_id} ]
-                    </span>
-                  )}
+        <CardContent className="pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sources.map((src, i) => (
+              <div
+                key={i}
+                className="p-4 rounded-xl border border-border/80 bg-surface-2/60 hover:border-border hover:bg-surface-2 transition-all flex flex-col justify-between gap-3"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-xs font-semibold text-text leading-snug">
+                      {src.title}
+                    </h4>
+                    {src.cve_id && (
+                      <Badge variant="rose" className="shrink-0 text-[10px]">
+                        {src.cve_id}
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted mt-2 leading-relaxed line-clamp-3">
+                    {src.content}
+                  </p>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-2 leading-relaxed line-clamp-3">
-                  {src.content}
-                </p>
-              </div>
 
-              <div className="pt-2 border-t border-slate-900 flex items-center justify-between text-[10px] font-mono text-slate-500">
-                <span>[ RELEVANCE: {(src.score * 100).toFixed(0)}% ]</span>
-                <a
-                  href={src.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-1 text-cyan-400 hover:text-cyan-300 transition-colors"
-                >
-                  <span>[ SOURCE INTEL ]</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </a>
+                <div className="pt-2 border-t border-border/50 flex items-center justify-between text-[11px] font-mono text-muted">
+                  <span>RELEVANCE: {(src.score * 100).toFixed(0)}%</span>
+                  <a
+                    href={src.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition-colors"
+                  >
+                    <span>View Advisory</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </TiltCard>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

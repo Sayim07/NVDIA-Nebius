@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -16,6 +16,7 @@ import {
   Home,
   ChevronRight,
   X,
+  Shield,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
@@ -99,7 +100,7 @@ function SidebarContent({
 
   return (
     <nav className="flex-1 overflow-y-auto py-3 px-2">
-      <ul className="space-y-0.5">
+      <ul className="space-y-1">
         {APP_ROUTES.map((route) => {
           const Icon = route.icon;
           const active = isActive(route.href);
@@ -109,32 +110,31 @@ function SidebarContent({
                 href={route.href}
                 prefetch
                 onClick={onLinkClick}
-                className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                className={`group relative flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-150 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary ${
                   active
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted hover:text-text hover:bg-surface-2'
+                    ? 'bg-primary/10 text-primary border border-primary/20 font-medium'
+                    : 'text-muted hover:text-text hover:bg-surface-2/70 border border-transparent'
                 }`}
                 aria-current={active ? 'page' : undefined}
                 title={collapsed ? route.label : undefined}
               >
-                {/* Active left indicator */}
+                {/* Active indicator dot */}
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r-full" />
+                  <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-4 bg-primary rounded-r-full" />
                 )}
 
                 <Icon
-                  className={`w-4.5 h-4.5 shrink-0 transition-colors ${
+                  className={`w-4 h-4 shrink-0 transition-colors ${
                     active ? 'text-primary' : 'text-muted group-hover:text-text'
                   }`}
-                  size={18}
                   aria-hidden="true"
                 />
 
                 {!collapsed && (
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-medium truncate ${active ? 'text-primary' : ''}`}>
+                  <div className="flex-1 min-w-0 flex items-center justify-between">
+                    <span className="text-xs truncate">
                       {route.label}
-                    </div>
+                    </span>
                   </div>
                 )}
               </Link>
@@ -157,15 +157,15 @@ export function DesktopSidebar({
   return (
     <aside
       className={`hidden lg:flex flex-col shrink-0 h-screen sticky top-0 border-r border-border bg-surface transition-[width] duration-200 ease-in-out overflow-hidden z-20 ${
-        collapsed ? 'w-[72px]' : 'w-[240px]'
+        collapsed ? 'w-[72px]' : 'w-[230px]'
       }`}
       aria-label="App navigation"
     >
       {/* Logo row */}
-      <div className="flex items-center gap-3 px-3 py-4 border-b border-border">
+      <div className="flex items-center gap-2.5 px-3 py-3.5 border-b border-border">
         <button
           onClick={onToggle}
-          className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl border border-border bg-surface-2 hover:bg-primary/10 hover:border-primary/30 text-text transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+          className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg border border-border bg-surface-2 hover:bg-primary/10 hover:border-primary/30 text-text transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           aria-expanded={!collapsed}
         >
@@ -174,20 +174,19 @@ export function DesktopSidebar({
             transition={{ duration: 0.2 }}
             className="flex items-center justify-center"
           >
-            <ChevronRight size={16} className="text-muted" />
+            <ChevronRight size={15} className="text-muted" />
           </motion.span>
         </button>
 
         {!collapsed && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="font-heading font-semibold text-sm text-text tracking-tight truncate"
-          >
-            HermesShield
-          </motion.span>
+          <div className="flex items-center justify-between flex-1 min-w-0 pr-1">
+            <div className="flex items-center gap-1.5 truncate">
+              <span className="font-heading font-semibold text-xs tracking-tight text-text truncate">
+                HermesShield
+              </span>
+            </div>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" title="System Online" />
+          </div>
         )}
       </div>
 
@@ -195,18 +194,18 @@ export function DesktopSidebar({
       <SidebarContent collapsed={collapsed} />
 
       {/* Footer */}
-      <div className="border-t border-border p-3 flex items-center gap-2">
+      <div className="border-t border-border p-2.5 flex items-center gap-2 bg-surface">
         <Link
           href="/"
-          className="w-9 h-9 shrink-0 flex items-center justify-center rounded-xl border border-border bg-surface-2 hover:bg-primary/10 hover:border-primary/30 text-muted hover:text-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          aria-label="Back to home"
-          title="Back to home"
+          className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg border border-border bg-surface-2 hover:bg-primary/10 hover:border-primary/30 text-muted hover:text-primary transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+          aria-label="Back to landing page"
+          title="Back to landing page"
         >
-          <Home size={16} />
+          <Home size={15} />
         </Link>
         {!collapsed && (
           <div className="flex items-center gap-2 flex-1 justify-between">
-            <span className="text-xs text-muted">MIT License</span>
+            <span className="text-[10px] font-mono text-muted/80">MIT · SOVEREIGN</span>
             <ThemeToggle />
           </div>
         )}
@@ -231,7 +230,6 @@ export function MobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: ()
     };
     document.addEventListener('keydown', handleKey);
 
-    // Focus first focusable element
     const focusables = drawerRef.current?.querySelectorAll<HTMLElement>(
       'a[href], button, [tabindex]:not([tabindex="-1"])'
     );
@@ -271,14 +269,17 @@ export function MobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             className="fixed top-0 left-0 h-full w-72 z-50 flex flex-col bg-surface border-r border-border shadow-float lg:hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
-              <span className="font-heading font-semibold text-base text-text">HermesShield</span>
+            <div className="flex items-center justify-between px-4 py-3.5 border-b border-border">
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-semibold text-sm text-text">HermesShield</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              </div>
               <button
                 onClick={onClose}
-                className="w-9 h-9 flex items-center justify-center rounded-xl border border-border bg-surface-2 hover:bg-primary/10 text-muted hover:text-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center rounded-lg border border-border bg-surface-2 hover:bg-primary/10 text-muted hover:text-primary transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
                 aria-label="Close navigation menu"
               >
-                <X size={16} />
+                <X size={15} />
               </button>
             </div>
 
@@ -286,17 +287,17 @@ export function MobileDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             <SidebarContent collapsed={false} onLinkClick={onClose} />
 
             {/* Footer */}
-            <div className="border-t border-border p-4 space-y-3">
+            <div className="border-t border-border p-3.5 space-y-2.5">
               <Link
                 href="/"
                 onClick={onClose}
-                className="flex items-center gap-2.5 text-sm text-muted hover:text-primary transition-colors"
+                className="flex items-center gap-2 text-xs text-muted hover:text-primary transition-colors"
               >
-                <Home size={15} />
-                <span>Back to home</span>
+                <Home size={14} />
+                <span>Return to Landing Page</span>
               </Link>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted/70">MIT License · v1.0.0</span>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-[10px] font-mono text-muted/70">MIT License · v1.0.0</span>
                 <ThemeToggle />
               </div>
             </div>

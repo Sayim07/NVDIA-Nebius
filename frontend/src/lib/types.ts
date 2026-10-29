@@ -58,6 +58,7 @@ export interface SecurityEvent {
   status: 'ALLOWED' | 'BLOCKED';
   policy_rule: string;
   reason: string;
+  latency_ms?: number;
 }
 
 export interface AttackSimulationResponse {

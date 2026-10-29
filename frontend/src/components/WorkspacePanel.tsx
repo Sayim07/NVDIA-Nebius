@@ -31,6 +31,8 @@ import {
 } from '@/lib/quotaStore';
 import { ByokModal } from './ui/ByokModal';
 import { AdminModal } from './ui/AdminModal';
+import { BorderBeam } from './ui/BorderBeam';
+import { ShimmerButton } from './ui/ShimmerButton';
 
 interface WorkspacePanelProps {
   onRun: (
@@ -430,32 +432,40 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
             <span className="text-[10px] font-mono text-slate-500">
               [ AIRLOCK: ARMED ]
             </span>
-            <Magnetic>
-              <button
-                onClick={handleDispatch}
-                disabled={loading || !instruction.trim()}
-                className="flex items-center space-x-2 px-4 py-2 rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50 cursor-pointer"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Executing Pipeline...</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3 h-3 fill-current" />
-                    <span>[ DISPATCH RUN ]</span>
-                  </>
-                )}
-              </button>
-            </Magnetic>
+            <ShimmerButton
+              onClick={handleDispatch}
+              disabled={loading || !instruction.trim()}
+              shimmerColor="#10b981"
+              background="rgba(16, 185, 129, 0.2)"
+              className="border-emerald-500/40 text-emerald-300 hover:text-white"
+            >
+              {loading ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Executing Pipeline...</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-3 h-3 fill-current" />
+                  <span>[ DISPATCH SOVEREIGN RUN ]</span>
+                </>
+              )}
+            </ShimmerButton>
           </div>
         </TiltCard>
       </div>
 
       {/* Right Column: Output Feed & Briefing Renderer */}
       <div className="lg:col-span-7">
-        <TiltCard className="p-5 bg-slate-900/90 border border-slate-800/90 min-h-[620px] flex flex-col justify-between">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-800/90 bg-slate-900/90 p-5 min-h-[620px] flex flex-col justify-between shadow-card">
+          {/* 21st.dev BorderBeam animation on briefing result */}
+          <BorderBeam
+            size={280}
+            duration={14}
+            colorFrom={loading ? "#f59e0b" : "#10b981"}
+            colorTo={loading ? "#ec4899" : "#06b6d4"}
+            borderWidth={1.5}
+          />
           <div>
             <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
               <div className="flex items-center space-x-2">
@@ -532,7 +542,7 @@ export const WorkspacePanel: React.FC<WorkspacePanelProps> = ({ onRun, loading, 
               </span>
             </div>
           )}
-        </TiltCard>
+        </div>
       </div>
 
       {/* Modals */}

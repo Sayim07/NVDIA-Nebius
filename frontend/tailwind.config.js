@@ -23,6 +23,7 @@ module.exports = {
         surface: {
           DEFAULT: "var(--surface)",
           2: "var(--surface-2)",
+          3: "#161922",
         },
         secondary: {
           DEFAULT: "var(--surface-2)",
@@ -71,6 +72,54 @@ module.exports = {
         'soft': '0 1px 2px rgba(0, 0, 0, 0.05)',
         'card': 'var(--card-shadow)',
         'float': '0 16px 40px -8px rgba(0, 0, 0, 0.25)',
+        'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.25)',
+        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.25)',
+        'glow-purple': '0 0 25px -5px rgba(168, 85, 247, 0.25)',
+      },
+      keyframes: {
+        "border-beam": {
+          "100%": {
+            "offset-distance": "100%",
+          },
+        },
+        "shimmer-slide": {
+          to: {
+            transform: "translate(calc(100cqw - 100%), 0)",
+          },
+        },
+        "spin-around": {
+          "0%": {
+            transform: "translateZ(0) rotate(0)",
+          },
+          "15%, 35%": {
+            transform: "translateZ(0) rotate(90deg)",
+          },
+          "65%, 85%": {
+            transform: "translateZ(0) rotate(270deg)",
+          },
+          "100%": {
+            transform: "translateZ(0) rotate(360deg)",
+          },
+        },
+        meteor: {
+          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": {
+            transform: "rotate(215deg) translateX(-500px)",
+            opacity: "0",
+          },
+        },
+        pulseGlow: {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.05)" },
+        },
+      },
+      animation: {
+        "border-beam": "border-beam calc(var(--duration)*1s) infinite linear",
+        "shimmer-slide": "shimmer-slide var(--speed) ease-in-out infinite alternate",
+        "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
+        meteor: "meteor 5s linear infinite",
+        "pulse-glow": "pulseGlow 4s ease-in-out infinite",
       },
     },
   },
