@@ -72,6 +72,9 @@ recordings/
 recordings_sync/
 voiceovers/
 test_*.png
+*.jpg
+*.jpeg
+*.png
 
 # Generated PDFs & Demo Automation Scripts
 *.pdf
@@ -81,6 +84,12 @@ generate_voiceover.py
 mux_final_video.py
 record_demo_walkthrough.py
 record_synchronized_demo.py
+generate_devpost_thumbnail.py
+create_composite_thumbnail.py
+*Thumbnail*
+*banner*
+*.jpg
+*.jpeg
 
 # Runtime Generated Briefings & Logs
 data/briefings/
